@@ -1,0 +1,224 @@
+
+
+time : Thu Jul  7 14:24:45 CST 2022
+The ENV Var  (time):(Thu Jul  7 14:24:45 CST 2022)
+SHELL : /bin/bash
+
+The ENV Var  (SHELL):(/bin/bash)
+ProxyUrl : 
+The ENV Var  (ProxyUrl):()
+PYTHONUNBUFFERED : 1
+The ENV Var  (PYTHONUNBUFFERED):(1)
+unstable_restarts : 0
+The ENV Var  (unstable_restarts):(0)
+treekill : true
+The ENV Var  (treekill):(true)
+QL_BRANCH : v2.13.3
+The ENV Var  (QL_BRANCH):(v2.13.3)
+TG_API_HOST : 
+The ENV Var  (TG_API_HOST):()
+LOG_LEVEL : debug
+The ENV Var  (LOG_LEVEL):(debug)
+env : [object Object]
+The ENV Var  (env):([object Object])
+HOSTNAME : qinglong3
+The ENV Var  (HOSTNAME):(qinglong3)
+filter_env : 
+The ENV Var  (filter_env):()
+PUSH_KEY : 
+The ENV Var  (PUSH_KEY):()
+TG_PROXY_AUTH : 
+The ENV Var  (TG_PROXY_AUTH):()
+namespace : default
+The ENV Var  (namespace):(default)
+PUBLIC_PORT : 5400
+The ENV Var  (PUBLIC_PORT):(5400)
+SECRET : whyour
+The ENV Var  (SECRET):(whyour)
+AutoDelCron : true
+The ENV Var  (AutoDelCron):(true)
+cmd_ql : ql
+The ENV Var  (cmd_ql):(ql)
+BotRepoUrl : 
+The ENV Var  (BotRepoUrl):()
+restart_time : 0
+The ENV Var  (restart_time):(0)
+EnableExtraShell : true
+The ENV Var  (EnableExtraShell):(true)
+YARN_VERSION : 1.22.19
+The ENV Var  (YARN_VERSION):(1.22.19)
+cmd_notify : notify
+The ENV Var  (cmd_notify):(notify)
+IGOT_PUSH_KEY : 
+The ENV Var  (IGOT_PUSH_KEY):()
+QYWX_KEY : 
+The ENV Var  (QYWX_KEY):()
+axm_options : [object Object]
+The ENV Var  (axm_options):([object Object])
+vizion_running : false
+The ENV Var  (vizion_running):(false)
+PWD : /ql/data/scripts
+The ENV Var  (PWD):(/ql/data/scripts)
+BARK_PUSH : 
+The ENV Var  (BARK_PUSH):()
+DD_BOT_TOKEN : 
+The ENV Var  (DD_BOT_TOKEN):()
+PORT : 5700
+The ENV Var  (PORT):(5700)
+PNPM_HOME : /root/.local/share/pnpm
+The ENV Var  (PNPM_HOME):(/root/.local/share/pnpm)
+PM2_USAGE : CLI
+The ENV Var  (PM2_USAGE):(CLI)
+NODE_ENV : development
+The ENV Var  (NODE_ENV):(development)
+log_date_format : YYYY-MM-DDTHH:mm:ss
+The ENV Var  (log_date_format):(YYYY-MM-DDTHH:mm:ss)
+GOBOT_TOKEN : 
+The ENV Var  (GOBOT_TOKEN):()
+exec_interpreter : node
+The ENV Var  (exec_interpreter):(node)
+CommandTimeoutTime : 1h
+The ENV Var  (CommandTimeoutTime):(1h)
+PM2_HOME : /root/.pm2
+The ENV Var  (PM2_HOME):(/root/.pm2)
+TG_USER_ID : 
+The ENV Var  (TG_USER_ID):()
+PUSH_PLUS_TOKEN : 
+The ENV Var  (PUSH_PLUS_TOKEN):()
+HOME : /root
+The ENV Var  (HOME):(/root)
+NODE_APP_INSTANCE : 0
+The ENV Var  (NODE_APP_INSTANCE):(0)
+LANG : zh_CN.UTF-8
+The ENV Var  (LANG):(zh_CN.UTF-8)
+MaxConcurrentNum : 5
+The ENV Var  (MaxConcurrentNum):(5)
+PipMirror : https://pypi.tuna.tsinghua.edu.cn/simple
+The ENV Var  (PipMirror):(https://pypi.tuna.tsinghua.edu.cn/simple)
+BARK_GROUP : QingLong
+The ENV Var  (BARK_GROUP):(QingLong)
+pm_id : 1
+The ENV Var  (pm_id):(1)
+QL_DIR : /ql
+The ENV Var  (QL_DIR):(/ql)
+RepoFileExtensions : js py
+The ENV Var  (RepoFileExtensions):(js py)
+pm_uptime : 1657174930579
+The ENV Var  (pm_uptime):(1657174930579)
+km_link : false
+The ENV Var  (km_link):(false)
+pm_cwd : /ql
+The ENV Var  (pm_cwd):(/ql)
+AutoStartBot : 
+The ENV Var  (AutoStartBot):()
+QINIU_AK : 
+The ENV Var  (QINIU_AK):()
+DEER_KEY : 
+The ENV Var  (DEER_KEY):()
+GOTIFY_URL : 
+The ENV Var  (GOTIFY_URL):()
+axm_monitor : [object Object]
+The ENV Var  (axm_monitor):([object Object])
+RandomDelay : 300
+The ENV Var  (RandomDelay):(300)
+instance_var : NODE_APP_INSTANCE
+The ENV Var  (instance_var):(NODE_APP_INSTANCE)
+pmx : true
+The ENV Var  (pmx):(true)
+DefaultCronRule : 
+The ENV Var  (DefaultCronRule):()
+GOBOT_URL : 
+The ENV Var  (GOBOT_URL):()
+GOTIFY_PRIORITY : 0
+The ENV Var  (GOTIFY_PRIORITY):(0)
+AutoAddCron : true
+The ENV Var  (AutoAddCron):(true)
+unique_id : b0d10f9d-733a-4fc9-8bb7-193da861ac82
+The ENV Var  (unique_id):(b0d10f9d-733a-4fc9-8bb7-193da861ac82)
+BARK_SOUND : 
+The ENV Var  (BARK_SOUND):()
+QINIU_SK : 
+
+The ENV Var  (QINIU_SK):()
+TERM : xterm
+The ENV Var  (TERM):(xterm)
+vizion : true
+The ENV Var  (vizion):(true)
+GOBOT_QQ : 
+The ENV Var  (GOBOT_QQ):()
+username : root
+The ENV Var  (username):(root)
+watch : false
+The ENV Var  (watch):(false)
+BARK_ICON : http://qn.whyour.cn/logo.png
+The ENV Var  (BARK_ICON):(http://qn.whyour.cn/logo.png)
+TG_BOT_TOKEN : 
+The ENV Var  (TG_BOT_TOKEN):()
+windowsHide : true
+The ENV Var  (windowsHide):(true)
+instances : 1
+The ENV Var  (instances):(1)
+automation : true
+The ENV Var  (automation):(true)
+axm_actions : 
+The ENV Var  (axm_actions):()
+QYWX_AM : 
+The ENV Var  (QYWX_AM):()
+SHLVL : 3
+The ENV Var  (SHLVL):(3)
+GOTIFY_TOKEN : 
+The ENV Var  (GOTIFY_TOKEN):()
+DD_BOT_SECRET : 
+The ENV Var  (DD_BOT_SECRET):()
+TG_PROXY_HOST : 
+The ENV Var  (TG_PROXY_HOST):()
+TG_PROXY_PORT : 
+The ENV Var  (TG_PROXY_PORT):()
+CRON_PORT : 5500
+The ENV Var  (CRON_PORT):(5500)
+cmd_task : task
+The ENV Var  (cmd_task):(task)
+NODE_PATH : /usr/local/bin:/usr/local/pnpm-global/5/node_modules:/usr/local/lib/node_modules:/root/.local/share/pnpm/global/5/node_modules
+The ENV Var  (NODE_PATH):(/usr/local/bin:/usr/local/pnpm-global/5/node_modules:/usr/local/lib/node_modules:/root/.local/share/pnpm/global/5/node_modules)
+created_at : 1657174930579
+The ENV Var  (created_at):(1657174930579)
+merge_logs : true
+The ENV Var  (merge_logs):(true)
+pm_pid_path : /root/.pm2/pids/panel-1.pid
+The ENV Var  (pm_pid_path):(/root/.pm2/pids/panel-1.pid)
+PUSH_PLUS_USER : 
+The ENV Var  (PUSH_PLUS_USER):()
+BACK_PORT : 5600
+The ENV Var  (BACK_PORT):(5600)
+PATH : /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/share/pnpm:/root/.local/share/pnpm/global/5/node_modules:
+The ENV Var  (PATH):(/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/.local/share/pnpm:/root/.local/share/pnpm/global/5/node_modules:)
+pm_err_log_path : /root/.pm2/logs/panel-error.log
+The ENV Var  (pm_err_log_path):(/root/.pm2/logs/panel-error.log)
+QINIU_SCOPE : 
+The ENV Var  (QINIU_SCOPE):()
+kill_retry_time : 100
+The ENV Var  (kill_retry_time):(100)
+NODE_VERSION : 18.3.0
+The ENV Var  (NODE_VERSION):(18.3.0)
+autorestart : true
+The ENV Var  (autorestart):(true)
+axm_dynamic : [object Object]
+The ENV Var  (axm_dynamic):([object Object])
+node_args : 
+The ENV Var  (node_args):()
+exec_mode : fork_mode
+The ENV Var  (exec_mode):(fork_mode)
+source_map_support : true
+The ENV Var  (source_map_support):(true)
+pm_exec_path : /ql/static/build/app.js
+The ENV Var  (pm_exec_path):(/ql/static/build/app.js)
+OLDPWD : /ql
+The ENV Var  (OLDPWD):(/ql)
+status : launching
+The ENV Var  (status):(launching)
+name : panel
+The ENV Var  (name):(panel)
+pm_out_log_path : /root/.pm2/logs/panel-out.log
+The ENV Var  (pm_out_log_path):(/root/.pm2/logs/panel-out.log)
+_ : /usr/bin/timeout
+The ENV Var  (_):(/usr/bin/timeout)
