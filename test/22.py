@@ -3,92 +3,94 @@
 
 
 # =================================以下代码不懂不要随便乱动=================================
+
 try:
     import requests
+    import json
     import sys
     import os
     import re
     import time
+    from loguru import logger
 except Exception as e:
     print(e)
+requests.packages.urllib3.disable_warnings()
 
-requests.packages.urllib3.disable_warnings()  # 移除ssl证书错误警告
 
-
-def Mac_env():
+def Mac_env(tpyqc_data):
     global ckArr
     pwd = os.path.dirname(os.path.abspath(__file__)) + os.sep
     path = pwd + ".env"
-    # print(path)
     with open(path, "r+") as f:
         env = f.read()
-        if "tpyqc_data" in env:
+        if tpyqc_data in env:
             r = re.compile(r'tpyqc_data="(.*?)"', re.M | re.S | re.I)
-            ckArr = []
             data = r.findall(env)
-            print(data)
-            if "@" in data[0]:
-                ck = data[0].split("@")
+            # print(data)
+            if "@" in data:
+                ck = data.split("@")
                 ckArr = ck
-            elif "\n" in data[0]:
-                ck = data[0].split("\n")
+            elif "\n" in data:
+                ck = data.split("\n")
                 ckArr = ck
             else:
-                ckArr = data[0]
-                print(ckArr)
+                ckArr = data
         else:
-            print("检查变量 tpyqc_data 是否已填写")
+            print("检查变量" + tpyqc_data + "是否已填写")
 
 
-def ql_env():
+def ql_env(tpyqc_data):
     global ckArr
-    if "tpyqc_data" in os.environ:
+    if tpyqc_data in os.environ:
         ckArr = []
-        # print(os.environ["tpyqc_data"])
-        data = os.environ["tpyqc_data"]
+        data = os.environ[tpyqc_data]
         if "@" in data:
             ck = data.split("@")
             ckArr = ck
         elif "\n" in data:
             ck = data.split("\n")
             ckArr = ck
-            print(ckArr)
         else:
             ckArr = data
 
 
-Mac_env()
-ql_env()
+Mac_env("tpyqc_data")
+ql_env("tpyqc_data")
 
 
-def start():
-    print("ni")
+class tpycq:
+    url_tpycq = "https://mrobot.pcauto.com.cn/auto_passport3_back_intf/passport3/rest/login_new.jsp"
 
+    def __init__(self, phone, passwd):
+        self.phone = phone
+        self.passwd = passwd
 
-# 执行登录
-def login(name, pwd):
-    try:
-        url = "https://mrobot.pcauto.com.cn/auto_passport3_back_intf/passport3/rest/login_new.jsp"
-        data = "password=" + pwd + "&username=" + name
-        hearders = {
-            "Content-Type": "application/x-www-form-urlencoded",
-        }
-        response = requests.post(url=url, headers=hearders, data=data, verify=False)
-        result = response.json()
-        print(result)
+    def login(self):
+        try:
+            url = self.url_tpycq
+            data = "password=" + self.passwd + "&username=" + self.phone
+            hearders = {
+                "Content-Type": "application/x-www-form-urlencoded",
+            }
+            response = requests.post(url=url, headers=hearders, data=data, verify=False)
+            result = response.json()
+            # print(result)
 
-        # hasFinishSign = result['obj']['hasFinishSign']
-        # if hasFinishSign == 1:
-        #     msg("【账号{0}】今日已签到 ,无需重复签到".format(account))
-        # else:
-        #     countDay = result['obj']['countDay']
-        #     commodityName = result['obj']['integralTaskSignPackageVOList'][0]['commodityName']
-        #     msg("【账号{0}】今日签到成功 ,连续签到{1}天 ,获得【{2}】".format(
-        #         account, countDay, commodityName))
+            if result["status"] == 0:
+                logger.info("登录: " + result["message"])
+                # msg("登录: " + result["message"])
+                session = result["session"]
+                print(session)
 
-    except Exception as e:
-        print(e)
-        # msg("【账号{}】签到失败 ,可能是Cookie过期".format(account))
+            # else:
+            #     countDay = result['obj']['countDay']
+            #     commodityName = result['obj']['integralTaskSignPackageVOList'][0]['commodityName']
+            #     msg("【账号{0}】今日签到成功 ,连续签到{1}天 ,获得【{2}】".format(
+            #         account, countDay, commodityName))
+
+        except Exception as e:
+            print(e)
+            # msg("【账号{}】签到失败 ,可能是Cookie过期".format(account))
 
 
 # 获取通知服务
@@ -150,8 +152,6 @@ class msg(object):
             except:
                 print("加载通知服务失败~")
 
-        ###################
-
 
 msg().main()
 nowtime = int(round(time.time() * 1000))
@@ -160,32 +160,16 @@ nowtime = int(round(time.time() * 1000))
 if __name__ == "__main__":
     global msg_info
     global ckArr
-    print("============脚本只支持青龙新版=============\n")
-    print("具体教程以文本模式打开文件 ,查看顶部教程\n\n")
-    print("============执行 太平洋汽车 签到脚本==============")
-    for ck in ckArr:
-        # print(ck)
-        print(len(ckArr))
+    try:
+        for data in ckArr:
+            ck = data.split("&")
+            tpyqc_info = "{ck[0]: ck[1]}"
+            print(tpyqc_info)
+            print(tpyqc_info, type(tpyqc_info))
 
-        ck = ck.split("&")
-        print(ck[0])
-        print(ck[1])
-        print("开始 登录")
-        login(ck[0], ck[1])
-
-
-# if cookies != '':
-#     for tpyqc_data in cookies:
-#         if a <= account:
-#             msg("★★★★★正在执行【账号{}】的任务★★★★★".format(a))
-#             # login(tpyqc_data, a)
-#             print("登录")
-#         else:
-#             break
-# elif tpyqc_data != '':
-#     # login(tpyqc_data, a)
-#     print("登录")
-# if '成功' in msg_info:
-#     send("太平洋汽车", msg_info)
-# if '过期' in msg_info:
-#     send("太平洋汽车", msg_info)
+            users = json.loads(tpyqc_info)
+    except json.decoder.JSONDecodeError:
+        logger.error("用户名密码解析失败, 请检查 变量 格式")
+    else:
+        logger.info("开始 登录")
+        tpycq.login(ck[0], ck[1])
