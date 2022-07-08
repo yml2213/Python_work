@@ -31,9 +31,10 @@ def last_version(name, mold):
     elif mold == 2:
         url = "http://yml-gitea.ml:2233/yml/JavaScript-yml/raw/branch/master/" + name + ".py"
     try:
-        _url = url
-        _headers = {}
-        response = requests.get(url=_url, headers=_headers, verify=False)
+        # print(url)
+        info_url = url
+        info_headers = {}
+        response = requests.get(url=info_url, headers=info_headers, verify=False)
         result = response.text
         r = re.compile(r'Version_Check = "(.*?)"')
         data1 = r.findall(result)
@@ -47,7 +48,7 @@ def tip():
     logger.info("============ 具体教程以请自行查看顶部教程 =============\n")
     logger.info("🔔 " + Script_Name + " ,开始!")
     origin_version = last_version(Name_Pinyin, 1)
-    # print(origin_version)
+    print(origin_version)
     logger.info("📌 本地脚本: V " + Script_Version +
                 "    远程仓库版本: V" + origin_version)
     logger.info("📌 🆙 更新内容: " + Script_Change)
@@ -95,26 +96,25 @@ ql_env("tpyqc_data")
 
 
 class Tpyqc:
-    def __init__(self, phone, passwd):
-        self.phone = phone
-        self.passwd = passwd
+    url_tpyqc = "https://mrobot.pcauto.com.cn/auto_passport3_back_intf/passport3/rest/login_new.jsp"
 
-    url_login = "https://mrobot.pcauto.com.cn/auto_passport3_back_intf/passport3/rest/login_new.jsp"
-
-    def login(self):
-        data_login = "password=" + self.passwd + "&username=" + self.phone
+    def login(self, phone, pwd):
         try:
+            _url = Tpyqc.url_tpyqc
+            _data = "password=" + pwd + "&username=" + phone
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
             }
-            response = requests.post(url=Tpyqc.url_login, headers=headers, data=data_login, verify=False)
+            response = requests.post(
+                url=_url, headers=headers, data=_data, verify=False)
             result = response.json()
+            # print(result)
 
             if result["status"] == 0:
-                # if result.status == 0:
-                logger.info("登录: " + result["message"] + ' ,更新 session 成功')
-                logger.info("")
+                logger.info("登录: " + result["message"])
+                # msg("登录: " + result["message"])
                 session = result["session"]
+                print(session)
 
             # else:
             #     countDay = result['obj']['countDay']
@@ -196,8 +196,8 @@ if __name__ == "__main__":
 
     for data in ckArr:
         ck = data.split("&")
-        # print(ck)
-        # print(ck[0], ck[1])
-        Tpyqc = Tpyqc(ck[0], ck[1])
         logger.info("开始 登录")
-        Tpyqc.login()
+        print(ck)
+        print(ck[0], ck[1])
+        # Tpyqc=
+        Tpyqc.login(1, ck[0], ck[1])
