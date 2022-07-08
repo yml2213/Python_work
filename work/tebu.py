@@ -1,5 +1,7 @@
 # !/bin/env python3
 # -*- coding: utf-8 -*
+
+
 # ================================= 以下代码不懂不要随便乱动 ====================================
 try:
     import requests
@@ -13,19 +15,17 @@ except Exception as e:
     logger.error(e)
 requests.packages.urllib3.disable_warnings()
 # --------------------------------------------------------------------------------------------
-Script_Name = "测试"
-Name_Pinyin = "ceshi"
-Script_Change = "Hello Python"
+Script_Name = "特步"
+Name_Pinyin = "tebu"
+Script_Change = "特步商城签到 ,第一个 py 脚本"
 Script_Version = "0.0.1"
-Version_Check = "0.0.2"
+Version_Check = "0.0.1"
+
 
 # --------------------------------------------------------------------------------------------
-# Origin_Version=''
-url = ''
-
 
 def last_version(name, mold):
-    global url
+    url = ''
     if mold == 1:
         url = "https://raw.gh.fakev.cn/yml2213/Python/master/" + name + "/" + name + ".py"
     elif mold == 2:
@@ -42,56 +42,45 @@ def last_version(name, mold):
         print(err)
 
 
-def tip():
-    logger.info("================ 脚本只支持青龙新版 =================")
-    logger.info("============ 具体教程以请自行查看顶部教程 =============\n")
-    logger.info("🔔 " + Script_Name + " ,开始!")
-    origin_version = last_version(Name_Pinyin, 1)
-    # print(origin_version)
-    logger.info("📌 本地脚本: V " + Script_Version +
-                "    远程仓库版本: V" + origin_version)
-    logger.info("📌 🆙 更新内容: " + Script_Change)
-
-
-def mac_env(tpyqc_data):
+def mac_env(tebu_data):
     global ckArr
     pwd = os.path.dirname(os.path.abspath(__file__)) + os.sep
     path = pwd + ".env"
     with open(path, "r+") as f:
         env = f.read()
-        if tpyqc_data in env:
-            r = re.compile(r'tpyqc_data="(.*?)"', re.M | re.S | re.I)
+        if tebu_data in env:
+            r = re.compile(r'tebu_data="(.*?)"', re.M | re.S | re.I)
             result = r.findall(env)
             # print(data[0])
             if "@" in result[0]:
-                ck = result[0].split("@")
-                ckArr = ck
+                _ck = result[0].split("@")
+                ckArr = _ck
             elif "\n" in result[0]:
-                ck = result[0].split("\n")
-                ckArr = ck
+                _ck = result[0].split("\n")
+                ckArr = _ck
             else:
                 ckArr = result
         else:
-            logger.warning("检查变量" + tpyqc_data + "是否已填写")
+            logger.warning("检查变量" + tebu_data + "是否已填写")
 
 
-def ql_env(tpyqc_data):
+def ql_env(tebu_data):
     global ckArr
-    if tpyqc_data in os.environ:
+    if tebu_data in os.environ:
         ckArr = []
-        data = os.environ[tpyqc_data]
-        if "@" in data:
-            ck = data.split("@")
-            ckArr = ck
-        elif "\n" in data:
-            ck = data.split("\n")
-            ckArr = ck
+        _data = os.environ[tebu_data]
+        if "@" in _data:
+            _ck = _data.split("@")
+            ckArr = _ck
+        elif "\n" in _data:
+            _ck = _data.split("\n")
+            ckArr = _ck
         else:
-            ckArr = data
+            ckArr = _data
 
 
-mac_env("tpyqc_data")
-ql_env("tpyqc_data")
+mac_env("tebu_data")
+ql_env("tebu_data")
 
 
 class Tpyqc:
@@ -107,7 +96,7 @@ class Tpyqc:
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
             }
-            response = requests.post(url=Tpyqc.url_login, headers=headers, data=data_login, verify=False)
+            response = requests.post(url=self.url_login, headers=headers, data=data_login, verify=False)
             result = response.json()
 
             if result["status"] == 0:
@@ -116,12 +105,8 @@ class Tpyqc:
                 logger.info("")
                 session = result["session"]
 
-            # else:
-            #     countDay = result['obj']['countDay']
-            #     commodityName = result['obj']['integralTaskSignPackageVOList'][0]['commodityName']
-            #     msg("【账号{0}】今日签到成功 ,连续签到{1}天 ,获得【{2}】".format(
-            #         account, countDay, commodityName))
-
+            else:
+                logger.error("登录失败 ,请检查 变量 是否正确!")
         except Exception as err:
             print(err)
             # msg("【账号{}】签到失败 ,可能是Cookie过期".format(account))
@@ -189,15 +174,26 @@ class msg(object):
 
 msg().main()
 
+
+def tip():
+    global ckArr
+    logger.info("================ 脚本只支持青龙新版 =================")
+    logger.info("============ 具体教程以请自行查看顶部教程 =============\n")
+    logger.info("🔔 " + Script_Name + " ,开始!")
+    # origin_version = last_version(Name_Pinyin, 1)
+    # logger.info("📌 本地脚本: V " + Script_Version +
+    #             "    远程仓库版本: V" + origin_version)
+    logger.info("📌 🆙 更新内容: " + Script_Change)
+    print(len(ckArr))
+    # logger.info("共发现 " + len(ckArr) + "个账号!")
+
+
 if __name__ == "__main__":
     global msg_info
     global ckArr
     tip()
-
     for data in ckArr:
         ck = data.split("&")
-        # print(ck)
-        # print(ck[0], ck[1])
         Tpyqc = Tpyqc(ck[0], ck[1])
         logger.info("开始 登录")
-        Tpyqc.login()
+        # Tpyqc.login()
