@@ -211,27 +211,31 @@ async function Variable_Check(ck, Variables) {
 	)
 }
 
-
 /**
  * 获取远程版本
  * http://yml-gitea.ml:2233/yml/JavaScript-yml/raw/branch/master/${name}.js
  * https://raw.gh.fakev.cn/yml2213/javascript/master/${name}/${name}.js
  */
-function Version_Check(name) {
-	return new Promise((resolve) => {
-		let url = {
-			url: `https://raw.gh.fakev.cn/yml2213/javascript/master/${name}/${name}.js`,
-		}
-		$.get(url, async (err, resp, data) => {
-			try {
-				VersionCheck = resp.body.match(/VersionCheck = "([\d\.]+)"/)[1]
-			} catch (e) {
-				$.logErr(e, resp);
-			} finally {
-				resolve(VersionCheck)
-			}
-		}, timeout = 3)
-	})
+ function Version_Check(name, type) {
+    return new Promise((resolve) => {
+        if (type == 1) {
+            url = `https://raw.gh.fakev.cn/yml2213/javascript/master/${name}/${name}.js`
+        } else if (type == 2) {
+            url = `http://yml-gitea.ml:2233/yml/JavaScript-yml/raw/branch/master/${name}.js`
+        }
+        let url = {
+            url: url,
+        }
+        $.get(url, async (err, resp, data) => {
+            try {
+                VersionCheck = resp.body.match(/VersionCheck = "([\d\.]+)"/)[1]
+            } catch (e) {
+                $.logErr(e, resp);
+            } finally {
+                resolve(VersionCheck)
+            }
+        }, timeout = 3)
+    })
 }
 
 /**

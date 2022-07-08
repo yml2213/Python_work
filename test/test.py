@@ -1,6 +1,10 @@
-import json
+import requests
 
-data = {"name": '小白', "age": 20}
-print(data, type(data))
-dic_str = json.loads(str(data).replace("'", "\""))
-print(dic_str)
+url = "https://raw.gh.fakev.cn/yml2213/Python/master/ceshi/ceshi.py"
+
+payload = {}
+headers = {}
+
+response = requests.request("GET", url, headers=headers, data=payload)
+
+print(response.text)

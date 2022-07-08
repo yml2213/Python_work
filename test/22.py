@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*
 
 
-# =================================以下代码不懂不要随便乱动=================================
-
+# =================================以下代码不懂不要随便乱动====================================
 try:
     import requests
     import json
@@ -13,8 +12,52 @@ try:
     import time
     from loguru import logger
 except Exception as e:
-    print(e)
+    logger.error(e)
 requests.packages.urllib3.disable_warnings()
+# --------------------------------------------------------------------------------------------
+Script_Name = "测试"
+Name_Pinyin = "ceshi"
+Script_Change = "Hello Python"
+Script_Version = "0.0.1"
+VersionCheck = "0.0.2"
+# --------------------------------------------------------------------------------------------
+# Origin_Version=''
+
+
+def last_Version(name, type):
+    if (type == 1):
+        url = "https://raw.gh.fakev.cn/yml2213/Python/master/" + name + "/" + name + ".py"
+    elif (type == 2):
+        url = "hhttp://yml-gitea.ml:2233/yml/JavaScript-yml/raw/branch/master/" + name + ".py"
+    try:
+        print(url)
+        info_url = url
+        info_headers = {}
+
+        response = requests.get(url=info_url, headers=info_headers, verify=False)
+        
+        print(response.text)
+        result = response.json()
+        print(result)
+        print(response)
+
+        # name = result['data']['name']
+        # id = result['data']['id']
+        # return name, id
+    except Exception as e:
+        print(e)
+        # msg("{0}获取个人信息失败,可能是DD_token 和 cookies过期".format(DD_token))
+
+
+def tip():
+    logger.info("================ 脚本只支持青龙新版 =================")
+    logger.info("============ 具体教程以请自行查看顶部教程 =============\n")
+    logger.info("🔔 " + Script_Name + " ,开始!")
+    Origin_Version = last_Version(Name_Pinyin, 1)
+    print(Origin_Version)
+    # logger.info("📌 本地脚本: V " + Script_Version +
+    #             "远程仓库版本: V" + Origin_Version)
+    logger.info("📌 🆙 更新内容: " + Script_Change)
 
 
 def Mac_env(tpyqc_data):
@@ -26,17 +69,17 @@ def Mac_env(tpyqc_data):
         if tpyqc_data in env:
             r = re.compile(r'tpyqc_data="(.*?)"', re.M | re.S | re.I)
             data = r.findall(env)
-            # print(data)
-            if "@" in data:
-                ck = data.split("@")
+            # print(data[0])
+            if "@" in data[0]:
+                ck = data[0].split("@")
                 ckArr = ck
-            elif "\n" in data:
-                ck = data.split("\n")
+            elif "\n" in data[0]:
+                ck = data[0].split("\n")
                 ckArr = ck
             else:
                 ckArr = data
         else:
-            print("检查变量" + tpyqc_data + "是否已填写")
+            logger.warning("检查变量" + tpyqc_data + "是否已填写")
 
 
 def ql_env(tpyqc_data):
@@ -72,7 +115,8 @@ class tpycq:
             hearders = {
                 "Content-Type": "application/x-www-form-urlencoded",
             }
-            response = requests.post(url=url, headers=hearders, data=data, verify=False)
+            response = requests.post(
+                url=url, headers=hearders, data=data, verify=False)
             result = response.json()
             # print(result)
 
@@ -160,16 +204,16 @@ nowtime = int(round(time.time() * 1000))
 if __name__ == "__main__":
     global msg_info
     global ckArr
-    try:
-        for data in ckArr:
-            ck = data.split("&")
-            tpyqc_info = "{ck[0]: ck[1]}"
-            print(tpyqc_info)
-            print(tpyqc_info, type(tpyqc_info))
+    tip()
+    # logger.info("================ 脚本只支持青龙新版 =================")
+    # logger.info("============ 具体教程以请自行查看顶部教程 =============\n")
+    # logger.info("🔔 " + Script_Name + " ,开始!")
+    # logger.info("📌 本地脚本: V " + Script_Version +
+    #             "远程仓库版本: V" + Origin_Version(Name_Pinyin, 1))
+    # logger.info("📌 🆙 更新内容: " + Script_Change)
 
-            users = json.loads(tpyqc_info)
-    except json.decoder.JSONDecodeError:
-        logger.error("用户名密码解析失败, 请检查 变量 格式")
-    else:
+    for data in ckArr:
+        ck = data.split("&")
         logger.info("开始 登录")
-        tpycq.login(ck[0], ck[1])
+        print(ck[0], ck[1])
+        # tpycq.login(ck[0], ck[1])
