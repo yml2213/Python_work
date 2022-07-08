@@ -1,7 +1,19 @@
 # !/bin/env python3
 # -*- coding: utf-8 -*
+"""
+    感谢 一峰一燕 提供脚本以及技术支持
 
+    项目名称: 特步 小程序
+    Author: yml
+    Date: 2022.7.8
+    cron: 19 7 * * *    tebu.py
 
+================== 青龙--配置文件 ==================
+    变量格式: export tebu_data=' ezr-vuid & ezr-st & ezr-ss & ezr-userid '   ,多账号用 换行 或 @ 分割
+
+    【教程】:  需要自行用手机抓取 wxa-tp.ezrpro.com 域名的包 , ezr-vuid , ezr-st , ezr-ss , ezr-userid 是 headers 中的参数
+
+"""
 # ================================= 以下代码不懂不要随便乱动 ====================================
 try:
     import requests
@@ -36,8 +48,11 @@ def last_version(name, mold):
         response = requests.get(url=_url, headers=_headers, verify=False)
         result = response.text
         r = re.compile(r'Version_Check = "(.*?)"')
-        data1 = r.findall(result)
-        return data1[0]
+        _data = r.findall(result)
+        if not _data:
+            return "出现未知错误 ,请稍后重试!"
+        else:
+            return _data[0]
     except Exception as err:
         print(err)
 
@@ -79,100 +94,44 @@ def ql_env(tebu_data):
             ckArr = _data
 
 
-mac_env("tebu_data")
+# mac_env("tebu_data")
 ql_env("tebu_data")
 
 
-class Tpyqc:
-    def __init__(self, phone, passwd):
-        self.phone = phone
-        self.passwd = passwd
+class Script:
+    def __init__(self, vuid, st, ss, userid):
+        self.vuid = vuid
+        self.st = st
+        self.ss = ss
+        self.userid = userid
 
-    url_login = "https://mrobot.pcauto.com.cn/auto_passport3_back_intf/passport3/rest/login_new.jsp"
-
-    def login(self):
-        data_login = "password=" + self.passwd + "&username=" + self.phone
+    def sign_info(self):
+        logger.info("开始 签到信息")
+        url_signinfo = "https://wxa-tp.ezrpro.com/myvip/Vip/SignIn/GetSignInDtlInfo"
+        headers = {
+            'Host': 'wxa-tp.ezrpro.com',
+            'ezr-cop-id': '143',
+            'ezr-vuid': self.vuid,
+            'ezr-source': 'weapp',
+            'ezr-st': self.st,
+            'ezr-ss': self.ss,
+            'ezr-userid': self.userid,
+            'ezr-sv': '1',
+            'ezr-brand-id': '254',
+            'content-type': 'application/json'
+        }
         try:
-            headers = {
-                "Content-Type": "application/x-www-form-urlencoded",
-            }
-            response = requests.post(url=self.url_login, headers=headers, data=data_login, verify=False)
+            response = requests.get(url=url_signinfo, headers=headers, verify=False)
             result = response.json()
-
-            if result["status"] == 0:
-                # if result.status == 0:
-                logger.info("登录: " + result["message"] + ' ,更新 session 成功')
-                logger.info("")
-                session = result["session"]
-
+            if result["Result"]["VipSignInDtl"]["IsSigInToday"]:
+                logger.info("签到: 您今天已经签到了 ,明天再来吧!")
+                return
+            elif not result["Result"]["VipSignInDtl"]["IsSigInToday"]:
+                logger.info("签到: 您今天未签到 ,去签到喽!")
             else:
-                logger.error("登录失败 ,请检查 变量 是否正确!")
+                logger.error("签到: 获取签到信息失败 ,请检查 变量 是否正确!")
         except Exception as err:
             print(err)
-            # msg("【账号{}】签到失败 ,可能是Cookie过期".format(account))
-
-
-# 获取通知服务
-class msg(object):
-    def __init__(self, m=""):
-        self.str_msg = m
-        self.message()
-
-    def message(self):
-        global msg_info
-        print(self.str_msg)
-        try:
-            msg_info = "{}\n{}".format(msg_info, self.str_msg)
-        except:
-            msg_info = "{}".format(self.str_msg)
-        sys.stdout.flush()  # 这代码的作用就是刷新缓冲区。
-        # 当我们打印一些字符时 ,并不是调用print函数后就立即打印的。一般会先将字符送到缓冲区 ,然后再打印。
-        # 这就存在一个问题 ,如果你想等时间间隔的打印一些字符 ,但由于缓冲区没满 ,不会打印。就需要采取一些手段。如每次打印后强行刷新缓冲区。
-
-    def getsendNotify(self, a=0):
-        if a == 0:
-            a += 1
-        try:
-            url = "https://gitee.com/curtinlv/Public/raw/master/sendNotify.py"
-            response = requests.get(url)
-            if "curtinlv" in response.text:
-                with open("sendNotify.py", "w+", encoding="utf-8") as f:
-                    f.write(response.text)
-            else:
-                if a < 5:
-                    a += 1
-                    return self.getsendNotify(a)
-                else:
-                    pass
-        except:
-            if a < 5:
-                a += 1
-                return self.getsendNotify(a)
-            else:
-                pass
-
-    def main(self):
-        global send
-        cur_path = os.path.abspath(os.path.dirname(__file__))
-        sys.path.append(cur_path)
-        if os.path.exists(cur_path + "/sendNotify.py"):
-            try:
-                from sendNotify import send
-            except:
-                self.getsendNotify()
-                try:
-                    from sendNotify import send
-                except:
-                    print("加载通知服务失败~")
-        else:
-            self.getsendNotify()
-            try:
-                from sendNotify import send
-            except:
-                print("加载通知服务失败~")
-
-
-msg().main()
 
 
 def tip():
@@ -180,20 +139,19 @@ def tip():
     logger.info("================ 脚本只支持青龙新版 =================")
     logger.info("============ 具体教程以请自行查看顶部教程 =============\n")
     logger.info("🔔 " + Script_Name + " ,开始!")
-    # origin_version = last_version(Name_Pinyin, 1)
-    # logger.info("📌 本地脚本: V " + Script_Version +
-    #             "    远程仓库版本: V" + origin_version)
+    origin_version = last_version(Name_Pinyin, 1)
+    logger.info("📌 本地脚本: V " + Script_Version +
+                "    远程仓库版本: V " + origin_version)
     logger.info("📌 🆙 更新内容: " + Script_Change)
-    print(len(ckArr))
-    # logger.info("共发现 " + len(ckArr) + "个账号!")
+    logger.info("共发现 " + str(len(ckArr)) + " 个账号!")
 
 
 if __name__ == "__main__":
     global msg_info
     global ckArr
     tip()
-    for data in ckArr:
+    for inx, data in enumerate(ckArr):
+        logger.info("=============== 开始第" + str(inx + 1) + "个账号 ===============")
         ck = data.split("&")
-        Tpyqc = Tpyqc(ck[0], ck[1])
-        logger.info("开始 登录")
-        # Tpyqc.login()
+        Script = Script(ck[0], ck[1], ck[2], ck[3])
+        Script.sign_info()
