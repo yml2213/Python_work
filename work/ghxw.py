@@ -148,15 +148,15 @@ def get_sign2(memberid):
     salt = "9544309039a91e9d8ae0bd07f3ca90ef"
     t = time.time()
     ts = int(round(t * 1000))
-    print("ts: ", ts)
+    # print("ts: ", ts)
     ts = str(ts)
     _data = f"app_version=1.7.2&clientid=1&device_id=0f1be1ff-44b7-47cb-afca-99a292820f03&ip=10.0.0.26&memberid={memberid}&modules=task%3A1&siteid=10001&system_name=android&type=android"
-    print(_data)
+    # print(_data)
     md5_encrypt(_data)
-    print(md5_encrypt(_data))
+    # print(md5_encrypt(_data))
     sign = md5_encrypt(md5_encrypt(_data) + salt + ts)
-    print(md5_encrypt(data) + salt + ts)
-    print(sign)
+    # print(md5_encrypt(data) + salt + ts)
+    # print(sign)
     return sign, ts
 
 
@@ -186,7 +186,6 @@ class Script:
         self.memberid = memberid
 
     url = "https://m-api.guanhai.com.cn/v2/creditnew"
-
     headers = {
         'Host': 'm-api.guanhai.com.cn',
         'User-Agent': 'okhttp/3.11.0'
@@ -206,10 +205,16 @@ class Script:
                 task_arr = result['data']['task']['list']
                 if len(task_arr) == 2:
                     print("新手任务请自行完成")
-                    task_arr = result['data']['task']['list'][1]
+                    task_arr = result['data']['task']['list'][1]['list']
                 elif len(task_arr) == 1:
-                    task_arr = result['data']['task']['list'][0]
-                
+                    task_arr = result['data']['task']['list'][0]['list']
+
+                print(task_arr)
+                print('=============')
+
+                # for task in task_arr:
+                #     print(task)
+
                 print(f": {result['message']}")
                 return
             elif not result["state"]:
