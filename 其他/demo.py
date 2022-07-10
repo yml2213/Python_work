@@ -19,22 +19,21 @@ Script_Change = "Hello Python"
 Script_Version = "0.0.1"
 Version_Check = "0.0.2"
 
+
 # --------------------------------------------------------------------------------------------
 # Origin_Version=''
-url = ''
 
 
 def last_version(name, mold):
-    global url
+    url = ''
     if mold == 1:
         url = "https://raw.gh.fakev.cn/yml2213/Python/master/" + name + "/" + name + ".py"
     elif mold == 2:
         url = "http://yml-gitea.ml:2233/yml/JavaScript-yml/raw/branch/master/" + name + ".py"
     try:
-        # print(url)
-        info_url = url
-        info_headers = {}
-        response = requests.get(url=info_url, headers=info_headers, verify=False)
+        _url = url
+        _headers = {}
+        response = requests.get(url=_url, headers=_headers, verify=False)
         result = response.text
         r = re.compile(r'Version_Check = "(.*?)"')
         data1 = r.findall(result)
@@ -48,7 +47,7 @@ def tip():
     logger.info("============ 具体教程以请自行查看顶部教程 =============\n")
     logger.info("🔔 " + Script_Name + " ,开始!")
     origin_version = last_version(Name_Pinyin, 1)
-    print(origin_version)
+    # print(origin_version)
     logger.info("📌 本地脚本: V " + Script_Version +
                 "    远程仓库版本: V" + origin_version)
     logger.info("📌 🆙 更新内容: " + Script_Change)
@@ -96,25 +95,26 @@ ql_env("tpyqc_data")
 
 
 class Tpyqc:
-    url_tpyqc = "https://mrobot.pcauto.com.cn/auto_passport3_back_intf/passport3/rest/login_new.jsp"
+    def __init__(self, phone, passwd):
+        self.phone = phone
+        self.passwd = passwd
 
-    def login(self, phone, pwd):
+    url_login = "https://mrobot.pcauto.com.cn/auto_passport3_back_intf/passport3/rest/login_new.jsp"
+
+    def login(self):
+        data_login = "password=" + self.passwd + "&username=" + self.phone
         try:
-            _url = Tpyqc.url_tpyqc
-            _data = "password=" + pwd + "&username=" + phone
             headers = {
                 "Content-Type": "application/x-www-form-urlencoded",
             }
-            response = requests.post(
-                url=_url, headers=headers, data=_data, verify=False)
+            response = requests.post(url=self.url_login, headers=headers, data=data_login, verify=False)
             result = response.json()
-            # print(result)
 
             if result["status"] == 0:
-                logger.info("登录: " + result["message"])
-                # msg("登录: " + result["message"])
+                # if result.status == 0:
+                logger.info("登录: " + result["message"] + ' ,更新 session 成功')
+                logger.info("")
                 session = result["session"]
-                print(session)
 
             # else:
             #     countDay = result['obj']['countDay']
@@ -151,7 +151,7 @@ class msg(object):
             url = "https://gitee.com/curtinlv/Public/raw/master/sendNotify.py"
             response = requests.get(url)
             if "curtinlv" in response.text:
-                with open("sendNotify.py", "w+", encoding="utf-8") as f:
+                with open("../work/sendNotify.py", "w+", encoding="utf-8") as f:
                     f.write(response.text)
             else:
                 if a < 5:
@@ -196,8 +196,8 @@ if __name__ == "__main__":
 
     for data in ckArr:
         ck = data.split("&")
+        # print(ck)
+        # print(ck[0], ck[1])
+        Tpyqc = Tpyqc(ck[0], ck[1])
         logger.info("开始 登录")
-        print(ck)
-        print(ck[0], ck[1])
-        # Tpyqc=
-        Tpyqc.login(1, ck[0], ck[1])
+        Tpyqc.login()

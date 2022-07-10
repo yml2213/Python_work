@@ -38,9 +38,11 @@ Version_Check = "0.1.2"
 def last_version(name, mold):
     url = ''
     if mold == 1:
-        url = "https://raw.gh.fakev.cn/yml2213/Python/master/" + name + "/" + name + ".py"
+        url = f"https://raw.gh.fakev.cn/yml2213/Python/master/{name}/{name}.py"
+
     elif mold == 2:
-        url = "http://yml-gitea.ml:2233/yml/JavaScript-yml/raw/branch/master/" + name + ".py"
+        url = f"http://yml-gitea.ml:2233/yml/JavaScript-yml/raw/branch/master/{name}.py"
+
     try:
         _url = url
         _headers = {}
@@ -70,12 +72,12 @@ def mac_env(name):
                 _ck = result[0].split("@")
                 ckArr = _ck
             elif "\n" in result[0]:
-                _ck = result[0].split("\n")
+                _ck = result[0].splitlines()
                 ckArr = _ck
             else:
                 ckArr = result
         else:
-            print("检查变量" + name + "是否已填写")
+            print(f"检查变量 {name} 是否已填写")
 
 
 def ql_env(name):
@@ -87,13 +89,13 @@ def ql_env(name):
             _ck = _data.split("@")
             ckArr = _ck
         elif "\n" in _data:
-            _ck = _data.split("\n")
+            _ck = _data.splitlines()
             ckArr = _ck
         else:
             ckArr = _data.split("@")
 
 
-# mac_env("tebu_data")
+mac_env("tebu_data")
 ql_env("tebu_data")
 
 
@@ -143,7 +145,7 @@ class Script:
             result = response.json()
             # print(result)
             if result["Success"]:
-                print("签到:" + result["Msg"]+" ,获得积分: " + result["Result"]["BonusValue"] + " 个!")
+                print(f"签到: {result['Result']}, 获得积分: {result['Result']['BonusValue']} 个!")
                 return
             else:
                 print("签到: 获取签到信息失败 ,请检查 变量 是否正确!")
@@ -155,12 +157,11 @@ def tip():
     global ckArr
     print("================ 脚本只支持青龙新版 =================")
     print("============ 具体教程以请自行查看顶部教程 =============\n")
-    print("🔔 " + Script_Name + " ,开始!")
+    print(f"🔔 {Script_Name} ,开始! ")
     origin_version = last_version(Name_Pinyin, 1)
-    print("📌 本地脚本: V " + Script_Version +
-          "    远程仓库版本: V " + origin_version)
-    print("📌 🆙 更新内容: " + Script_Change)
-    print("共发现 " + str(len(ckArr)) + " 个账号!")
+    print(f"📌 本地脚本: {Script_Version}      远程仓库版本: V {origin_version}")
+    print(f"📌 🆙 更新内容: {Script_Change}")
+    print(f"共发现 {str(len(ckArr))} 个账号")
 
 
 if __name__ == "__main__":
