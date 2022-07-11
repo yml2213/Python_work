@@ -34,12 +34,10 @@ new Env('叮咚买菜积分兑换');
 
 '''
 
-
 DD_token = ''
 DD_cookies = ''
 DDmc_Coupon = '8元无门槛券'
 DDmc_accout = '1'
-
 
 '''
 
@@ -53,28 +51,26 @@ cookies = ''
 
 try:
     import requests
-    import json,sys,os,re
-    import time,datetime
+    import json, sys, os, re
+    import time, datetime
 except Exception as e:
     print(e)
 
 requests.packages.urllib3.disable_warnings()
 
-
 pwd = os.path.dirname(os.path.abspath(__file__)) + os.sep
 path = pwd + "env.sh"
 
-
 today = datetime.datetime.now().strftime('%Y-%m-%d')
-tomorrow=(datetime.datetime.now() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
+tomorrow = (datetime.datetime.now() + datetime.timedelta(days=1)).strftime('%Y-%m-%d')
 
-#开始抢兑时间
-starttime='23:59:59.00000000'
-#结束时间
-endtime='00:00:10.00000000'
+# 开始抢兑时间
+starttime = '23:59:59.00000000'
+# 结束时间
+endtime = '00:00:10.00000000'
 
-qgtime = '{} {}'.format (today, starttime)
-qgendtime = '{} {}'.format (tomorrow, endtime)
+qgtime = '{} {}'.format(today, starttime)
+qgendtime = '{} {}'.format(tomorrow, endtime)
 
 
 def printT(s):
@@ -101,6 +97,7 @@ def getEnvs(label):
             return int(label)
     except:
         return label
+
 
 ##############      在pycharm测试ql环境用 ,实际用下面的代码运行      #########
 
@@ -136,24 +133,24 @@ def getEnvs(label):
 ########################################################################
 
 if "DD_token" in os.environ:
-    print(len (os.environ["DD_token"]))
-    if len (os.environ["DD_token"]) > 24:
+    print(len(os.environ["DD_token"]))
+    if len(os.environ["DD_token"]) > 24:
         tokens = os.environ["DD_token"]
         # temporary = cookies.split ('&')
         # cookies = temporary[0]
-        printT ("已获取并使用Env环境DD_token")
+        printT("已获取并使用Env环境DD_token")
     else:
         DD_token = os.environ["DD_token"]
 else:
     print("检查变量DD_token是否已填写")
 
 if "DD_cookies" in os.environ:
-    print(len (os.environ["DD_cookies"]))
-    if len (os.environ["DD_cookies"]) > 43:
+    print(len(os.environ["DD_cookies"]))
+    if len(os.environ["DD_cookies"]) > 43:
         cookies = os.environ["DD_cookies"]
         # temporary = cookies.split ('&')
         # cookies = temporary[0]
-        printT ("已获取并使用Env环境DD_cookies")
+        printT("已获取并使用Env环境DD_cookies")
     else:
         DD_cookies = os.environ["DD_cookies"]
 else:
@@ -161,14 +158,14 @@ else:
 
 if "DDmc_Coupon" in os.environ:
     DDmc_Coupon = os.environ["DDmc_Coupon"]
-    printT (f"已获取并使用Env环境DDmc_Coupon ,兑换{DDmc_Coupon}")
+    printT(f"已获取并使用Env环境DDmc_Coupon ,兑换{DDmc_Coupon}")
 else:
     print("DDmc_Coupon未填写")
     exit(0)
 
 if "DDmc_accout" in os.environ:
     DDmc_accout = os.environ["DDmc_accout"]
-    printT ("已获取并使用Env环境DDmc_accout")
+    printT("已获取并使用Env环境DDmc_accout")
 else:
     print("DDmc_accout未填写")
 
@@ -178,6 +175,7 @@ class msg(object):
     def __init__(self, m=''):
         self.str_msg = m
         self.message()
+
     def message(self):
         global msg_info
         printT(self.str_msg)
@@ -185,9 +183,10 @@ class msg(object):
             msg_info = "{}\n{}".format(msg_info, self.str_msg)
         except:
             msg_info = "{}".format(self.str_msg)
-        sys.stdout.flush()           #这代码的作用就是刷新缓冲区。
-                                     # 当我们打印一些字符时 ,并不是调用print函数后就立即打印的。一般会先将字符送到缓冲区 ,然后再打印。
-                                     # 这就存在一个问题 ,如果你想等时间间隔的打印一些字符 ,但由于缓冲区没满 ,不会打印。就需要采取一些手段。如每次打印后强行刷新缓冲区。
+        sys.stdout.flush()  # 这代码的作用就是刷新缓冲区。
+        # 当我们打印一些字符时 ,并不是调用print函数后就立即打印的。一般会先将字符送到缓冲区 ,然后再打印。
+        # 这就存在一个问题 ,如果你想等时间间隔的打印一些字符 ,但由于缓冲区没满 ,不会打印。就需要采取一些手段。如每次打印后强行刷新缓冲区。
+
     def getsendNotify(self, a=0):
         if a == 0:
             a += 1
@@ -209,6 +208,7 @@ class msg(object):
                 return self.getsendNotify(a)
             else:
                 pass
+
     def main(self):
         global send
         cur_path = os.path.abspath(os.path.dirname(__file__))
@@ -229,30 +229,32 @@ class msg(object):
             except:
                 printT("加载通知服务失败~")
         ###################
+
+
 msg().main()
 nowtime = int(round(time.time() * 1000))
-
 
 uid = ''
 
 if tokens != '':
-    tokens = tokens.split ('&')
-    DD_token = tokens[int(DDmc_accout)-1]
-    if len (tokens) == 1:
+    tokens = tokens.split('&')
+    DD_token = tokens[int(DDmc_accout) - 1]
+    if len(tokens) == 1:
         DD_token = tokens[0]
     else:
         pass
 
 if cookies != '':
-    cookies = cookies.split ('&')
-    DD_cookies = cookies[int(DDmc_accout)-1]
-    if len (cookies) == 1:
+    cookies = cookies.split('&')
+    DD_cookies = cookies[int(DDmc_accout) - 1]
+    if len(cookies) == 1:
         DD_cookies = cookies[0]
     else:
         pass
 
-#获取个人信息
-def get_info(DD_token,DD_cookies):
+
+# 获取个人信息
+def get_info(DD_token, DD_cookies):
     try:
         info_url = f'https://maicai.api.ddxq.mobi/user/info?api_version=9.1.0&app_client_id=1&station_id={DD_token}&native_version=&app_version=9.35.1&latitude=23.017158&longitude=113.811603'
         info_headers = {
@@ -266,18 +268,19 @@ def get_info(DD_token,DD_cookies):
             "Origin": "https://game.m.ddxq.mobi",
             "Accept-Language": "zh-cn",
         }
-        response = requests.get (url=info_url, headers=info_headers, verify=False)
+        response = requests.get(url=info_url, headers=info_headers, verify=False)
         result = response.json()
         # print(result)
         name = result['data']['name']
         id = result['data']['id']
-        return name,id
+        return name, id
     except Exception as e:
         print(e)
-        msg ("{0}获取个人信息失败,可能是DD_token 和 cookies过期".format(DD_token))
+        msg("{0}获取个人信息失败,可能是DD_token 和 cookies过期".format(DD_token))
 
-#获取activityId
-def get_activityId(DD_token,DD_cookies,name):
+
+# 获取activityId
+def get_activityId(DD_token, DD_cookies, name):
     try:
         info_url = f'https://gw.api.ddxq.mobi/promocore-service/client/maicai/mcActivityClient/v1/listByStationId'
         info_headers = {
@@ -286,12 +289,12 @@ def get_activityId(DD_token,DD_cookies,name):
             "Host": "gw.api.ddxq.mobi",
             "Cookie": DD_cookies,
             "Origin": "https://activity.m.ddxq.mobi",
-            "content-type":"application/json;charset=UTF-8",
+            "content-type": "application/json;charset=UTF-8",
 
         }
         data = r'{"api_version":"9.7.3","app_version":"1.0.0","app_client_id":3,"station_id":"' + f'{DD_token}' + r'","native_version":"9.39.1","city_number":"1117","latitude":23.017158,"longitude":113.811603,"biz_type":"POINT_BUY_TICKET"}'
         # print(data)
-        response = requests.post (url=info_url, headers=info_headers, verify=False,data=data)
+        response = requests.post(url=info_url, headers=info_headers, verify=False, data=data)
         result = response.json()
         # print(result)
         if DDmc_Coupon == '3元无门槛券':
@@ -308,18 +311,18 @@ def get_activityId(DD_token,DD_cookies,name):
         return activityId
     except Exception as e:
         print(e)
-        msg ("{0}获取优惠券ID失败,可能是DD_token过期".format(name))
+        msg("{0}获取优惠券ID失败,可能是DD_token过期".format(name))
 
 
-#执行兑换
-def exchange(name,DD_token,DD_cookies,activityId):
+# 执行兑换
+def exchange(name, DD_token, DD_cookies, activityId):
     try:
-        printT (f"抢购时间为: {qgtime}")
-        printT (f"正在等待兑换时间 ,请勿终止退出...")
+        printT(f"抢购时间为: {qgtime}")
+        printT(f"正在等待兑换时间 ,请勿终止退出...")
         while True:
-            nowtime1 = datetime.datetime.now ().strftime ('%Y-%m-%d %H:%M:%S.%f8')
+            nowtime1 = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f8')
             if nowtime1 > qgtime:
-                nowtime = int (round (time.time () * 1000))
+                nowtime = int(round(time.time() * 1000))
                 url = f'https://gw.api.ddxq.mobi/promocore-service/client/maicai/mcActivityTrigger/v1/trigger'
                 data = f'api_version=9.7.3&app_version=1.0.0&app_client_id=3&station_id={DD_token}&native_version=9.39.1&city_number=1117&latitude=23.017158&longitude=113.811603&activityId={activityId}&bizNo={nowtime}'
                 # data = f'api_version=9.7.3&app_version=1.0.0&app_client_id=3&station_id=60ace35775474200016efe49&native_version=9.39.1&city_number=1117&latitude=23.017158&longitude=113.811603&activityId=AC2020085xw2o0d01ne60000&bizNo=1637683242226'
@@ -332,16 +335,16 @@ def exchange(name,DD_token,DD_cookies,activityId):
                     "accept-language": "zh-CN,zh-Hans;q=0.9",
                     "accept": "*/*",
                     "content-type": "application/x-www-form-urlencoded",
-                    "host":"gw.api.ddxq.mobi",
-                    "content-length":"222",
+                    "host": "gw.api.ddxq.mobi",
+                    "content-length": "222",
                 }
-                response = requests.post(url=url,data=data,headers=heards,verify=False)
+                response = requests.post(url=url, data=data, headers=heards, verify=False)
                 result = response.json()
                 print(result)
                 messge = result['msg']
                 code = result['code']
                 if code == 0:
-                    msg("【账号{0}】兑换{1}成功".format(name,DDmc_Coupon))
+                    msg("【账号{0}】兑换{1}成功".format(name, DDmc_Coupon))
                     break
             elif nowtime1 > qgendtime:
                 msg("超过兑换时间 ,退出执行".format(name))
@@ -349,7 +352,7 @@ def exchange(name,DD_token,DD_cookies,activityId):
 
     except Exception as e:
         print(e)
-        msg('叮咚积分优惠券兑换{}异常 ,可能是token过期'.format (name))
+        msg('叮咚积分优惠券兑换{}异常 ,可能是token过期'.format(name))
 
 
 if __name__ == '__main__':
@@ -359,10 +362,10 @@ if __name__ == '__main__':
     print("============执行叮咚积分优惠券兑换脚本==============")
     print(DD_token)
     print(DD_cookies)
-    name,uid = get_info(DD_token,DD_cookies)
-    msg (f"单账号兑换模式 ,兑换【账号{DDmc_accout}{name}】")
-    activityId = get_activityId (DD_token, DD_cookies, name)
-    exchange(name,DD_token,DD_cookies,activityId)
+    name, uid = get_info(DD_token, DD_cookies)
+    msg(f"单账号兑换模式 ,兑换【账号{DDmc_accout}{name}】")
+    activityId = get_activityId(DD_token, DD_cookies, name)
+    exchange(name, DD_token, DD_cookies, activityId)
     if "成功" in msg_info:
         send("叮咚积分优惠券兑换", msg_info)
     elif "过期" in msg_info:

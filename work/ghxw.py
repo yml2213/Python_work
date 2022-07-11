@@ -2,18 +2,17 @@
 # -*- coding: utf-8 -*
 """
     new Env("观海新闻")
-    感谢 一峰一燕 提供脚本以及技术支持
-
-    项目名称: 观海新闻
+    Name: 观海新闻  邀请码 bx0337   感谢填写,你的支持就是我的动力
     Author: yml
     Date: 2022.7.8
     cron: 19 7 * * *    ghxw.py
 
+
+    感谢 一峰一燕 提供技术支持
     ================== 青龙--配置文件 ==================
     变量格式: export ghxw_data=" memberid @ memberid "   ,多账号用 换行 或 @ 分割
 
-    【教程】:  需要自行用手机抓取 wxa-tp.ezrpro.com 域名的包 , memberid 是 headers 中的参数
-
+    教程:  需要自行用手机抓取 m-api.guanhai.com.cn 域名的包 , memberid 是 headers 中的参数
 """
 # ================================= 以下代码不懂不要随便乱动 ====================================
 try:
@@ -29,13 +28,11 @@ requests.packages.urllib3.disable_warnings()
 # --------------------------------------------------------------------------------------------
 Script_Name = "观海新闻"
 Name_Pinyin = "ghxw"
-Script_Change = "观海新闻商城签到 ,第一个 py 脚本"
-Script_Version = "0.1.2"
-Version_Check = "0.1.2"
+Script_Change = "观海新闻  基本完成所有任务"
+Script_Version = "0.0.1"
 
 
 # --------------------------------------------------------------------------------------------
-
 
 def last_version(name, mold):
     url = ''
@@ -43,14 +40,13 @@ def last_version(name, mold):
         url = f"https://raw.gh.fakev.cn/yml2213/Python/master/{name}/{name}.py"
 
     elif mold == 2:
-        url = f"http://yml-gitea.ml:2233/yml/JavaScript-yml/raw/branch/master/{name}.py"
-
+        url = f"http://yml-gitea.ml:2233/yml/Python/raw/branch/master/{name}.py"
     try:
         _url = url
         _headers = {}
         response = requests.get(url=_url, headers=_headers, verify=False)
         result = response.text
-        r = re.compile(r'Version_Check = "(.*?)"')
+        r = re.compile(r'Script_Version = "(.*?)"')
         _data = r.findall(result)
         if not _data:
             return "出现未知错误 ,请稍后重试!"
@@ -104,7 +100,7 @@ def md5_encrypt(_data):
     return md5.hexdigest()
 
 
-def get_sign(memberid, name):
+def get_sign(memberid, name, device_id):
     salt = "9544309039a91e9d8ae0bd07f3ca90ef"
     t = time.time()
     ts = int(round(t * 1000))
@@ -112,22 +108,29 @@ def get_sign(memberid, name):
     # print("ts: ", ts)
     # print("ts_: ", ts_)
     ts = str(ts)
-    _data2 = f"app_version=1.7.2&clientid=1&device_id=0f1be1ff-44b7-47cb-afca-99a292820f03&ip=10.0.0.26&memberid=137505&modules=task%3A1&siteid=10001&system_name=android&type=android"
 
-    _data = f'app_version=1.7.2&clientid=1&contentId={memberid}_{ts_}&creditType={name}&device_id=0f1be1ff-44b7-47cb-afca-99a292820f03&ip=10.0.0.26&memberId={memberid}&memberid={memberid}&modules=common%3A1&siteid=10001&system_name=android&type=android'
+    _data = f'app_version=1.7.2&clientid=1&contentId={memberid}_{ts_}&creditType={name}&device_id={device_id}&ip=10.0.0.26&memberId={memberid}&memberid={memberid}&modules=common%3A1&siteid=10001&system_name=android&type=android'
     # print(_data)
     md5_encrypt(_data)
     # print(md5_encrypt(_data))
     sign = md5_encrypt(md5_encrypt(_data) + salt + ts)
     # print(md5_encrypt(data) + salt + ts)
     # print(sign)
-    return sign, ts, ts_
+    return sign, ts, ts_, device_id
 
 
-def get_params(memberid, name, sign, ts, ts_):
+def get_device_id():
+    import random
+    import string
+    random_12 = ''.join(random.sample(string.digits + string.ascii_lowercase, 12))
+    _id = f"0f1be1ff-44b7-47cb-afca-{random_12}"
+    return _id
+
+
+def get_params(memberid, name, sign, ts, ts_, device_id):
     params = {
         'clientid': '1',
-        'device_id': '0f1be1ff-44b7-47cb-afca-99a292820f03',
+        'device_id': device_id,
         'app_version': '1.7.2',
         'ip': '10.0.0.26',
         'system_name': 'android',
@@ -144,26 +147,26 @@ def get_params(memberid, name, sign, ts, ts_):
     return params
 
 
-def get_sign2(memberid):
+def get_sign2(memberid, device_id):
     salt = "9544309039a91e9d8ae0bd07f3ca90ef"
     t = time.time()
     ts = int(round(t * 1000))
     # print("ts: ", ts)
     ts = str(ts)
-    _data = f"app_version=1.7.2&clientid=1&device_id=0f1be1ff-44b7-47cb-afca-99a292820f03&ip=10.0.0.26&memberid={memberid}&modules=task%3A1&siteid=10001&system_name=android&type=android"
+    _data = f"app_version=1.7.2&clientid=1&device_id={device_id}&ip=10.0.0.26&memberid={memberid}&modules=task%3A1&siteid=10001&system_name=android&type=android"
     # print(_data)
     md5_encrypt(_data)
     # print(md5_encrypt(_data))
     sign = md5_encrypt(md5_encrypt(_data) + salt + ts)
     # print(md5_encrypt(data) + salt + ts)
     # print(sign)
-    return sign, ts
+    return sign, ts, device_id
 
 
-def get_params2(memberid, sign, ts):
+def get_params2(memberid, sign, ts, device_id):
     params = {
         'clientid': '1',
-        'device_id': '0f1be1ff-44b7-47cb-afca-99a292820f03',
+        'device_id': device_id,
         'app_version': '1.7.2',
         'ip': '10.0.0.26',
         'system_name': 'android',
@@ -174,11 +177,7 @@ def get_params2(memberid, sign, ts):
         'modules': 'task:1',
         'memberid': memberid
     }
-    return params
-
-
-mac_env("ghxw_data")
-ql_env("ghxw_data")
+    return params, device_id
 
 
 class Script:
@@ -192,13 +191,16 @@ class Script:
     }
 
     def task_list(self):
-        r = get_sign2(self.memberid)
-        (sign, ts) = (r[0], r[1])
-        p = get_params2(self.memberid, sign, ts)
+        device_id = get_device_id()
+        s = get_sign2(self.memberid, device_id)
+        sign, ts, device_id = s[0], s[1], s[2]
+        p = get_params2(self.memberid, sign, ts, device_id)
+        params, device_id = p[0], p[1]
+
         print("开始 任务列表")
         try:
-            response = requests.get(url=self.url, params=p, headers=self.headers, verify=False)
-            print(response.url)
+            response = requests.get(url=self.url, params=params, headers=self.headers, verify=False)
+            # print(response.url)
             result = response.json()
             # print(result)
             if result["state"]:
@@ -209,14 +211,11 @@ class Script:
                 elif len(task_arr) == 1:
                     task_arr = result['data']['task']['list'][0]['list']
 
-                print(task_arr)
-                print('=============')
-
-                # for task in task_arr:
-                #     print(task)
-
-                print(f": {result['message']}")
-                return
+                for task in task_arr:
+                    _max = int(task['max_times'])
+                    _completed = int(task['completed_times'])
+                    print(task['name'], ":", _completed, "/", _max)
+                    self.task_plan(task['name'], _max - _completed, device_id)
             elif not result["state"]:
                 pass
             else:
@@ -224,17 +223,19 @@ class Script:
         except Exception as err:
             print(err)
 
-    def task(self, name):
-        r = get_sign(self.memberid, name)
-        (sign, ts, ts_) = (r[0], r[1], r[2])
-        p = get_params(self.memberid, name, sign, ts, ts_)
-        print("开始 任务")
+    def do_task(self, name, device_id):
+        r = get_sign(self.memberid, name, device_id)
+        sign, ts, ts_, device_id = r[0], r[1], r[2], r[3]
+        p = get_params(self.memberid, name, sign, ts, ts_, device_id)
+        # print(f"开始 {name}任务")
+        # time.sleep(2)
         try:
             response = requests.get(url=self.url, params=p, headers=self.headers, verify=False)
             result = response.json()
             # print(result)
             if result["state"]:
                 print(f"{name}: {result['message']}")
+                time.sleep(5)
                 return
             elif not result["state"]:
                 print(f"{name}: {result['error']}")
@@ -243,31 +244,126 @@ class Script:
         except Exception as err:
             print(err)
 
+    def task_plan(self, name, num, device_id):
+        try:
+            if name == "启动":
+                for i in range(num):
+                    print(f"第 {i + 1} 次 {name}")
+                    self.do_task("SYS_LOGIN", device_id)
+            elif name == "阅读":
+                for i in range(num):
+                    print(f"第 {i + 1} 次 {name}")
+                    self.do_task("SYS_READ", device_id)
+            elif name == "评论":
+                for i in range(num):
+                    print(f"第 {i + 1} 次 {name}")
+                    self.do_task("SYS_COMMENT", device_id)
+            elif name == "分享":
+                for i in range(num):
+                    print(f"第 {i + 1} 次 {name}")
+                    self.do_task("SYS_SHARE", device_id)
+            elif name == "点赞":
+                for i in range(num):
+                    print(f"第 {i + 1} 次 {name}")
+                    self.do_task("SYS_LIKE", device_id)
+            elif name == "收藏":
+                for i in range(num):
+                    print(f"第 {i + 1} 次 {name}")
+                    self.do_task("SYS_COLLECT", device_id)
+            elif name == "邀请":
+                pass
+        except Exception as err:
+            print(err)
+
+
+# 获取通知服务
+class Msg(object):
+    def __init__(self, m=''):
+        self.str_msg = m
+        self.message()
+
+    def message(self):
+        global msg_info
+        print(self.str_msg)
+        # noinspection PyBroadException
+        try:
+            msg_info = "{}\n{}".format(msg_info, self.str_msg)
+        except:
+            msg_info = "{}".format(self.str_msg)
+        sys.stdout.flush()
+        # 这代码的作用就是刷新缓冲区。
+        # 当我们打印一些字符时 ,并不是调用print函数后就立即打印的。一般会先将字符送到缓冲区 ,然后再打印。
+        # 这就存在一个问题 ,如果你想等时间间隔的打印一些字符 ,但由于缓冲区没满 ,不会打印。就需要采取一些手段。如每次打印后强行刷新缓冲区。
+
+    def getsendnotify(self, a=0):
+        if a == 0:
+            a += 1
+        # noinspection PyBroadException
+        try:
+            url = 'https://gitee.com/curtinlv/Public/raw/master/sendNotify.py'
+            response = requests.get(url)
+            if 'curtinlv' in response.text:
+                with open('sendNotify.py', "w+", encoding="utf-8") as f:
+                    f.write(response.text)
+            else:
+                if a < 5:
+                    a += 1
+                    return self.getsendnotify(a)
+                else:
+                    pass
+        except:
+            if a < 5:
+                a += 1
+                return self.getsendnotify(a)
+            else:
+                pass
+
+    def main(self):
+        global send
+        cur_path = os.path.abspath(os.path.dirname(__file__))
+        sys.path.append(cur_path)
+        if os.path.exists(cur_path + "/sendNotify.py"):
+            # noinspection PyBroadException
+            try:
+                from sendNotify import send
+            except:
+                self.getsendnotify()
+                # noinspection PyBroadException
+                try:
+                    from sendNotify import send
+                except:
+                    print("加载通知服务失败~")
+        else:
+            self.getsendnotify()
+            # noinspection PyBroadException
+            try:
+                from sendNotify import send
+            except:
+                print("加载通知服务失败~")
+
+
+Msg().main()
+nowtime = int(round(time.time() * 1000))
+
+mac_env(f"{Name_Pinyin}_data")
+ql_env(f"{Name_Pinyin}_data")
+
 
 def tip():
-    global ckArr
     print("================ 脚本只支持青龙新版 =================")
     print("============ 具体教程以请自行查看顶部教程 =============\n")
     print(f"🔔 {Script_Name} ,开始! ")
-    origin_version = last_version(Name_Pinyin, 1)
+    origin_version = last_version(Name_Pinyin, 2)
     print(f"📌 本地脚本: {Script_Version}      远程仓库版本: V {origin_version}")
     print(f"📌 🆙 更新内容: {Script_Change}")
     print(f"共发现 {str(len(ckArr))} 个账号")
 
 
 if __name__ == "__main__":
-    global ckArr
+    global ckArr, msg_info, send
     tip()
     for inx, data in enumerate(ckArr):
         print("=============== 开始第" + str(inx + 1) + "个账号 ===============")
         ck = data.split("&")
         ghxw = Script(ck[0])
-        # print(ck)
         ghxw.task_list()
-
-        # ghxw.task("SYS_LOGIN")
-        # ghxw.task("SYS_READ")
-        # ghxw.task("SYS_SHARE")
-        # ghxw.task("SYS_COMMENT")
-        # ghxw.task("SYS_LIKE")
-        # ghxw.task("SYS_COLLECT")
