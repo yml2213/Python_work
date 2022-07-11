@@ -276,74 +276,68 @@ class Script:
             print(err)
 
 
-# 获取通知服务
+# 通知服务
 class Msg(object):
     def __init__(self, m=''):
         self.str_msg = m
         self.message()
 
+    def get_sendnotify(self):
+        if not os.path.exists("sendNotify.py"):
+            cur_path = os.getcwd()
+            print(f"未找到通知依赖文件,将于脚本执行目录({cur_path})新建:sendNotify.py ")
+            try:
+                url = 'https://raw.gh.fakev.cn/yml2213/Python/master/sendNotify.py'
+                response = requests.get(url)
+                with open('sendNotify.py', "w+", encoding="utf-8") as f:
+                    f.write(response.text)
+            except Exception as err:
+                print(err)
+        else:
+            print("文件已存在,跳过")
+            pass
+        pass
+
     def message(self):
         global msg_info
         print(self.str_msg)
-        # noinspection PyBroadException
         try:
-            msg_info = "{}\n{}".format(msg_info, self.str_msg)
-        except:
+            msg_info = ''
+            msg_info = f"{msg_info}\n{self.str_msg}"
+        except Exception as err:
+            print(err)
             msg_info = "{}".format(self.str_msg)
         sys.stdout.flush()
         # 这代码的作用就是刷新缓冲区。
         # 当我们打印一些字符时 ,并不是调用print函数后就立即打印的。一般会先将字符送到缓冲区 ,然后再打印。
         # 这就存在一个问题 ,如果你想等时间间隔的打印一些字符 ,但由于缓冲区没满 ,不会打印。就需要采取一些手段。如每次打印后强行刷新缓冲区。
 
-    def getsendnotify(self, a=0):
-        if a == 0:
-            a += 1
-        # noinspection PyBroadException
-        try:
-            url = 'https://gitee.com/curtinlv/Public/raw/master/sendNotify.py'
-            response = requests.get(url)
-            if 'curtinlv' in response.text:
-                with open('sendNotify.py', "w+", encoding="utf-8") as f:
-                    f.write(response.text)
-            else:
-                if a < 5:
-                    a += 1
-                    return self.getsendnotify(a)
-                else:
-                    pass
-        except:
-            if a < 5:
-                a += 1
-                return self.getsendnotify(a)
-            else:
-                pass
-
     def main(self):
         global send
-        cur_path = os.path.abspath(os.path.dirname(__file__))
-        sys.path.append(cur_path)
+        cur_path = os.getcwd()
+        # print(cur_path)
         if os.path.exists(cur_path + "/sendNotify.py"):
             # noinspection PyBroadException
             try:
                 from sendNotify import send
-            except:
-                self.getsendnotify()
-                # noinspection PyBroadException
+            except Exception as err:
+                self.get_sendnotify()
+                print(err)
                 try:
                     from sendNotify import send
-                except:
+                except Exception as err:
+                    print(err)
                     print("加载通知服务失败~")
         else:
-            self.getsendnotify()
-            # noinspection PyBroadException
+            self.get_sendnotify()
             try:
                 from sendNotify import send
-            except:
+            except Exception as err:
+                print(err)
                 print("加载通知服务失败~")
 
 
 Msg().main()
-nowtime = int(round(time.time() * 1000))
 
 mac_env(f"{Name_Pinyin}_data")
 ql_env(f"{Name_Pinyin}_data")
@@ -359,11 +353,16 @@ def tip():
     print(f"共发现 {str(len(ckArr))} 个账号")
 
 
-if __name__ == "__main__":
-    global ckArr, msg_info, send
-    tip()
+def start():
     for inx, data in enumerate(ckArr):
         print("=============== 开始第" + str(inx + 1) + "个账号 ===============")
         ck = data.split("&")
         ghxw = Script(ck[0])
         ghxw.task_list()
+
+
+if __name__ == "__main__":
+    global ckArr, msg_info, send
+    tip()
+    start()
+    send(f"{Name_Pinyin}", msg_info)
