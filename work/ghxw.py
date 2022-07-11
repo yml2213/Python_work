@@ -5,7 +5,7 @@
     Name: 观海新闻  邀请码 bx0337   感谢填写,你的支持就是我的动力
     Author: yml
     Date: 2022.7.8
-    cron: 19 7 * * *    ghxw.py
+    cron: 19 7,12 * * *    ghxw.py
 
 
     感谢 一峰一燕 提供技术支持
@@ -29,7 +29,7 @@ requests.packages.urllib3.disable_warnings()
 Script_Name = "观海新闻"
 Name_Pinyin = "ghxw"
 Script_Change = "观海新闻  基本完成所有任务"
-Script_Version = "0.0.1"
+Script_Version = "0.1.2"
 
 
 # --------------------------------------------------------------------------------------------
@@ -147,13 +147,13 @@ def get_params(memberid, name, sign, ts, ts_, device_id):
     return params
 
 
-def get_sign2(memberid, device_id):
+def get_sign_type(memberid, name, device_id):
     salt = "9544309039a91e9d8ae0bd07f3ca90ef"
     t = time.time()
     ts = int(round(t * 1000))
     # print("ts: ", ts)
     ts = str(ts)
-    _data = f"app_version=1.7.2&clientid=1&device_id={device_id}&ip=10.0.0.26&memberid={memberid}&modules=task%3A1&siteid=10001&system_name=android&type=android"
+    _data = f"app_version=1.7.2&clientid=1&device_id={device_id}&ip=10.0.0.26&memberid={memberid}&modules={name}%3A1&siteid=10001&system_name=android&type=android"
     # print(_data)
     md5_encrypt(_data)
     # print(md5_encrypt(_data))
@@ -163,7 +163,7 @@ def get_sign2(memberid, device_id):
     return sign, ts, device_id
 
 
-def get_params2(memberid, sign, ts, device_id):
+def get_params_type(memberid, sign, ts, name, device_id):
     params = {
         'clientid': '1',
         'device_id': device_id,
@@ -174,7 +174,7 @@ def get_params2(memberid, sign, ts, device_id):
         'siteid': '10001',
         'time': ts,
         'type': 'android',
-        'modules': 'task:1',
+        'modules': f'{name}:1',
         'memberid': memberid
     }
     return params, device_id
@@ -190,14 +190,34 @@ class Script:
         'User-Agent': 'okhttp/3.11.0'
     }
 
-    def task_list(self):
+    def signin(self, name):
         device_id = get_device_id()
-        s = get_sign2(self.memberid, device_id)
+        s = get_sign_type(self.memberid, name, device_id)
         sign, ts, device_id = s[0], s[1], s[2]
-        p = get_params2(self.memberid, sign, ts, device_id)
+        p = get_params_type(self.memberid, sign, ts, name, device_id)
+        params, device_id = p[0], p[1]
+        try:
+            response = requests.get(url=self.url, params=params, headers=self.headers, verify=False)
+            # print(response.url)
+            result = response.json()
+            # print(result)
+            if result['state']:
+                # print(result['info'])
+                msg(f"签到: 成功, 获得 {result['data']['sign']['credits']} 积分, 累计签到 {result['data']['sign']['count']} 天")
+            else:
+                # print(result['error'])
+                msg(result['error'])
+        except Exception as err:
+            print(err)
+
+    def task_list(self, name):
+        device_id = get_device_id()
+        s = get_sign_type(self.memberid, name, device_id)
+        sign, ts, device_id = s[0], s[1], s[2]
+        p = get_params_type(self.memberid, sign, ts, name, device_id)
         params, device_id = p[0], p[1]
 
-        print("开始 任务列表")
+        msg("开始 任务列表")
         try:
             response = requests.get(url=self.url, params=params, headers=self.headers, verify=False)
             # print(response.url)
@@ -214,7 +234,8 @@ class Script:
                 for task in task_arr:
                     _max = int(task['max_times'])
                     _completed = int(task['completed_times'])
-                    print(task['name'], ":", _completed, "/", _max)
+                    # print(task['name'], ":", _completed, "/", _max)
+                    msg(f"{task['name']}:{_completed}/{_max}")
                     self.task_plan(task['name'], _max - _completed, device_id)
             elif not result["state"]:
                 pass
@@ -234,7 +255,7 @@ class Script:
             result = response.json()
             # print(result)
             if result["state"]:
-                print(f"{name}: {result['message']}")
+                msg(f"{name}: {result['message']}")
                 time.sleep(5)
                 return
             elif not result["state"]:
@@ -277,7 +298,7 @@ class Script:
 
 
 # 通知服务
-class Msg(object):
+class msg(object):
     def __init__(self, m=''):
         self.str_msg = m
         self.message()
@@ -337,9 +358,9 @@ class Msg(object):
                 print("加载通知服务失败~")
 
 
-Msg().main()
+msg().main()
 
-mac_env(f"{Name_Pinyin}_data")
+# mac_env(f"{Name_Pinyin}_data")
 ql_env(f"{Name_Pinyin}_data")
 
 
@@ -358,11 +379,12 @@ def start():
         print("=============== 开始第" + str(inx + 1) + "个账号 ===============")
         ck = data.split("&")
         ghxw = Script(ck[0])
-        ghxw.task_list()
+        ghxw.signin("sign")
+        ghxw.task_list("task")
 
 
 if __name__ == "__main__":
     global ckArr, msg_info, send
     tip()
     start()
-    send(f"{Name_Pinyin}", msg_info)
+    send(f"{Script_Name}", msg_info)
