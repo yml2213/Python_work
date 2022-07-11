@@ -180,6 +180,11 @@ def get_params_type(memberid, sign, ts, name, device_id):
     return params, device_id
 
 
+def msg(data):
+    Msg(data)
+    # send(f"{Script_Name}", msg_info)
+
+
 class Script:
     def __init__(self, memberid):
         self.memberid = memberid
@@ -298,7 +303,7 @@ class Script:
 
 
 # 通知服务
-class msg(object):
+class Msg(object):
     def __init__(self, m=''):
         self.str_msg = m
         self.message()
@@ -323,7 +328,7 @@ class msg(object):
         global msg_info
         print(self.str_msg)
         try:
-            msg_info = ''
+            # msg_info = ''
             msg_info = f"{msg_info}\n{self.str_msg}"
         except Exception as err:
             print(err)
@@ -358,9 +363,9 @@ class msg(object):
                 print("加载通知服务失败~")
 
 
-msg().main()
+Msg().main()
 
-# mac_env(f"{Name_Pinyin}_data")
+mac_env(f"{Name_Pinyin}_data")
 ql_env(f"{Name_Pinyin}_data")
 
 
