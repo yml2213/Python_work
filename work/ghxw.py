@@ -7,6 +7,8 @@
     Date: 2022.7.8
     cron: 19 7,12 * * *    ghxw.py
 
+    7.8     完成任务
+    7.12    增加通知
 
     感谢 一峰一燕 提供技术支持
     ================== 青龙--配置文件 ==================
@@ -28,7 +30,7 @@ requests.packages.urllib3.disable_warnings()
 # --------------------------------------------------------------------------------------------
 Script_Name = "观海新闻"
 Name_Pinyin = "ghxw"
-Script_Change = "观海新闻  基本完成所有任务"
+Script_Change = "增加通知"
 Script_Version = "0.1.2"
 
 
@@ -182,7 +184,6 @@ def get_params_type(memberid, sign, ts, name, device_id):
 
 def msg(data):
     Msg(data)
-    # send(f"{Script_Name}", msg_info)
 
 
 class Script:
@@ -372,16 +373,16 @@ ql_env(f"{Name_Pinyin}_data")
 def tip():
     print("================ 脚本只支持青龙新版 =================")
     print("============ 具体教程以请自行查看顶部教程 =============\n")
-    print(f"🔔 {Script_Name} ,开始! ")
+    msg(f"🔔 {Script_Name} ,开始! ")
     origin_version = last_version(Name_Pinyin, 2)
-    print(f"📌 本地脚本: {Script_Version}      远程仓库版本: V {origin_version}")
-    print(f"📌 🆙 更新内容: {Script_Change}")
-    print(f"共发现 {str(len(ckArr))} 个账号")
+    msg(f"📌 本地脚本: {Script_Version}      远程仓库版本: V {origin_version}")
+    msg(f"📌 🆙 更新内容: {Script_Change}")
+    msg(f"共发现 {str(len(ckArr))} 个账号")
 
 
 def start():
     for inx, data in enumerate(ckArr):
-        print("=============== 开始第" + str(inx + 1) + "个账号 ===============")
+        msg("=============== 开始第" + str(inx + 1) + "个账号 ===============")
         ck = data.split("&")
         ghxw = Script(ck[0])
         ghxw.signin("sign")
