@@ -36,21 +36,49 @@ Script_Version = "0.1.2"
 
 
 class Script:
-    def __init__(self, cookie):
-        self.cookie = cookie
+    def __init__(self, c_utma, phpsessid):
+        self.c_utma = c_utma
+        self.PHPSESSID = phpsessid
 
     # noinspection PyMethodMayBeStatic
     def url(self, name):
         url = f"https://growrice.supor.com/rice/backend/public/index.php/api/{name}"
         return url
 
+    def cookie(self):
+        print(self.c_utma)
+        ts = int(time.time())
+        print(ts)
+        c_utma = self.c_utma.split(".")
+        c_utma[-2], c_utma[-3] = ts, ts
+        print(c_utma)
+        print(type(c_utma))
+        c_utma = str(c_utma)
+        # c_utma = '.'.join(c_utma)
+        _c_utma = ".".join(c_utma)
+        print(_c_utma)
+
+        cookie = f"{c_utma}; {self.PHPSESSID}"
+        print(cookie)
+        return cookie
+
     def headers(self):
         headers = {
             'Host': 'growrice.supor.com',
-            'Cookie': self.cookie,
+            'Cookie': self.cookie(),
             'content-type': 'application/x-www-form-urlencoded'
         }
+        print(headers)
         return headers
+
+    def user_info(self, name):  # 签到信息查询
+        try:
+            response = requests.get(url=self.url("users/get-user-info"), headers=self.headers(), verify=False)
+            result = response.json()
+            print(result)
+
+        except Exception as err:
+            print(err)
 
     def sign_info(self, name):  # 签到信息查询
         try:
@@ -153,7 +181,7 @@ class Script:
                 for i in range(len(rice_list)):
                     _id, num, collect_name = rice_list[i]["id"], rice_list[i]["num"], rice_list[i]["name"]
                     # print(_id, num, _name)
-                    self.collect_rice(_id, num, collect_name)
+                    self.collect_rice("收大米", _id, num, collect_name)
             elif result['code'] == 2:
                 msg(f"{name}: {result['msg']}, 请自己先打开一次小程序,种大米后在执行脚本!")
             else:
@@ -333,10 +361,14 @@ def start():
     for inx, data in enumerate(ckArr):
         msg("=============== 开始第" + str(inx + 1) + "个账号 ===============")
         ck = data.split("&")
-        sbr = Script(ck[0])
-        sbr.sign_info("签到信息")
-        sbr.get_rice("偷大米")
-        sbr.get_index_info("获取可收取大米信息")
+        print(ck[0])
+        print(ck[1])
+        sbr = Script(ck[0], ck[1])
+        # sbr.user_info("用户信息")
+        # sbr.sign_info("签到信息")
+        # sbr.get_rice("偷大米")
+        # sbr.get_index_info("获取可收取大米信息")
+        sbr.cookie()
 
 
 if __name__ == "__main__":
