@@ -1,0 +1,719 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title></title>
+	<meta charset="utf-8">
+	<meta name="viewport"
+		content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1" />
+
+	<!--https://developer.apple.com/library/safari/documentation/AppleApplications/Reference/SafariHTMLRef/Articles/MetaTags.html-->
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+	<meta name="format-detection" content="telephone=no">
+
+	<!-- force webkit on 360 -->
+	<meta name="renderer" content="webkit" />
+	<meta name="force-rendering" content="webkit" />
+
+	<!-- force edge on IE -->
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="msapplication-tap-highlight" content="no">
+
+	<!-- force full screen on some browser -->
+	<!-- force screen orientation on some browser -->
+	<meta name="screen-orientation" content="" />
+	<meta name="x5-orientation" content="">
+
+	<!--fix fireball/issues/3568 -->
+	<!--<meta name="browsermode" content="application">-->
+	<meta name="x5-page-mode" content="app">
+
+	<link rel="stylesheet" href="resource/css/common-0.0.1.css" />
+</head>
+
+<body>
+	<!--直播视频标签-->
+	<!--<video id="LiveVideo" class="video-js vjs-default-skin" style="display: none; position:absolute" controls preload="auto" data-setup='{}' playsinline webkit-playsinline x5-playsinline x5-video-player-type="h5-page" x5-video-orientation="portrait"
+	x5-video-player-fullscreen="true">
+		<source src="https://12899.hlsplay.aodianyun.com/wsp_12899_1462350599/stream.m3u8" type="application/x-mpegURL">
+	</video>
+	<script src="./resource/js/video.js"></script>-->
+
+	<!--x5-video-orientation="landscape" preload="none" muted autoplay loop-->
+	<!-- 视频标签,cdn自动匹配加载，需要赋值的src地址请写在src-path后 如 src-path="resource/assets/vdo/video.mp4" -->
+	<!--<video id="videoMain" class="abs-pos video-main" src-path="" playsinline webkit-playsinline x5-video-player-type="h5-page"
+		x5-video-orientation="portrait" x5-video-player-fullscreen="true"></video>-->
+	<!--二维码img标签 cdn自动匹配加载，需要赋值的src地址请写在src-path后 如 src-path="resource/assets/img/ewm.png" -->
+	<!--<img id="imgEwm" class="abs-pos img-ewm" />-->
+	<img id="imgfff" src="resource/assets/img/loading/load_3.png" alt="" style="display:none;width: 100%;position: absolute;height: 100%;z-index: 990;opacity:0"/>
+	<img src="resource/assets/p36/p36_1.png" id="returnBtn" style="z-index: 997;display: none;position: absolute" >
+
+	<!-- 默认背景音乐 cdn自动匹配加载，需要赋值的src地址请写在src-path后 如 src-path="resource/assets/music.mp3" -->
+	<audio id="audioBgm" class="abs-pos" display: "none"></audio>
+	<!-- audio标签实例，所有新加的audio都必须在bgm这个audio标签之下 cdn自动匹配加载，需要赋值的src地址请写在src-path后 如 src-path="resource/assets/vos/vos_btn.mp3" -->
+	<!--<audio id="audioBtn" class="abs-pos" src-path="resource/assets/vos/vos_btn.mp3"></audio>-->
+
+	<!--<input id="pickPhoto" type="file" accept="image/*" style="display: none;position: absolute;opacity: 0;z-index: 999"></input>-->
+	<!--<iframe id="inputShake" src="resource/html/inputShake.html" frameborder="0" style="position: absolute;display: none"></iframe>-->
+	<!-- 基础逻辑模块  -->
+	<script async="false">
+		var v = 258;
+	// v = new Date().getTime();
+	var w = window;
+	var resPath = "resource/";
+	var resAssetsPath = `${resPath}assets/`;
+	var resAssetsImgPath = `${resAssetsPath}img/`;
+	var resJsPath = `${resPath}js/`;
+	var resJsThirdPath = `${resJsPath}third/`;
+	var resJsThirdOtherPath = `${resJsThirdPath}other/`;
+	var resJsThirdPlatformPath = `${resJsThirdPath}platform/`;
+
+	/** 项目配置模型开始 */
+	w.projectConfigModel = {
+		//
+		initSrc: `${resJsPath}main.js`,
+		//
+		vConsoleConfigModel: {
+			$: "伪CMD",
+			//是否强制开启
+			coerceOpen: false,
+			//显示文案
+			textModel: {
+				//默认
+				default: "调试版",
+				//未上线
+				notOnline: "该版本未上线",
+				//已下线
+				offline: "该版本已下线",
+			},
+			//文件地址
+			src: `${resJsThirdPath}VConsole-3.3.4.min.js`
+		},
+		//核弹配置模型
+		nukeConfigModel: {
+			//是否加载，
+			load: false,
+			//请求地址
+			url: "https://game.flyh5.cn/game/wx7c3ed56f7f792d84/data_system/api.php?a=web",
+			//配置标识 （测试NgnVuUpUeKHCZHzCDtm）
+			code: "h1x65r6v7GRbBekxWHH",
+		},
+		//本地配置模型（若不加载核弹则会执行下面的配置）
+		localConfigModel: {
+			//项目标题
+			docTitle: "苏泊尔种大米",
+			//分享数据
+			shareData: {
+				//分享标题
+				title: "和我一起快乐种大米",
+				//分享内容
+				desc: "快来一起种大米",
+				//分享图片
+				imgUrl: `${((w && w.location.href) || "").split(/(\w+)\.html/)[0]}${resAssetsImgPath}share.jpg${(w && w.nnVer) || ""}`,
+				//分享地址
+				link: "",
+			},
+			//上线时间
+			onlineDate: { year: (new Date().getFullYear()) - 1, month: 1, date: 1, hours: 0, minutes: 0, seconds: 0 },
+			//下线时间
+			offlineDate: { year: (new Date().getFullYear()) + 2, month: 1, date: 1, hours: 0, minutes: 0, seconds: 0 }
+		},
+		//后端配置模型
+		serverConfigModel: {
+			//是否授权
+			isAuth: false,
+			//入口地址
+			enterUrl: "",
+			//请求地址
+			requestUrl:
+			 "https://growrice.supor.com/rice/backend/public/index.php",
+			// "https://game.vrupup.com/sanguo/lidianbiao/applet/dami/public",
+			//是否开启时间戳授权检测
+			isTimestampAuth: false,
+			//间隔X毫秒后就跳转入口地址
+			Timestamp: 10000,
+		},
+		//标签配置模型
+		domConfigModel: {
+			//默认图片标签
+			imgDft: { id: "imgDft", src: `${resAssetsImgPath}loading/loading_bg.jpg` },
+			//背景音乐图片标签
+			imgBgm: { id: "imgBgm", src: "" },
+			//背景音乐音频标签
+			audioBgm: { id: "audioBgm", src: "" },
+		},
+		//egret配置模型
+		egretConfigModel: {
+			//
+			domID: "divEgret",
+			//
+			manifestSrc: "manifest.json",
+			//主逻辑名
+			mainMinJsName: "main.min.js",
+			//混淆后主逻辑名
+			mainEncryptName: "main.min2.js",
+			//
+			mainMinJsPath: "",
+			//方向 portrait=>竖屏 landscape=>横屏
+			orientation: "portrait",
+			//样式参考
+			styleReference: {
+				//设计尺寸宽
+				width: 750,
+				//设计尺寸高
+				height: 1480,
+				//安全区域宽
+				safeWidth: 750,
+				//安全区域高
+				safeHeight: 1334,
+				//适配策略 ；1=>下边超出适配；2=>上下超出居中适配；3=>上下超出居中适配变种；
+				adaptiveStrategy: 1,
+				//竖屏窗口小于安全区域是否压缩
+				portraitCompressMode: true,
+				//竖屏窗口超过设计尺寸是否拉伸
+				portraitFillMode: true,
+				//横屏窗口小于安全区域是否压缩
+				landscapeCompressMode: true,
+				//横屏窗口超过设计尺寸是否拉伸
+				landscapeFillMode: true,
+			},
+			//ios渲染模式,canvas,webgl
+			iosRenderMode: "canvas",
+			//android渲染模式
+			androidRenderMode: "canvas",
+			//入口类名
+			entryClassName: "Main",
+			//默认最大触屏触发事件数
+			maxTouches: 1,
+			//帧率
+			frameRate: 60,
+			//是否监听html进入后台
+			monitorVisibility: true,
+			//是否点击特效
+			touchStarEffects: false,
+			//BGM采用audioContext播放
+			BGMWithAudioContext: false,
+			//屏幕旋转提示模型
+			orientationTipsModel: {
+				//开启标识，-1=>锁定竖屏，横屏提示；0=>不开启；1=>锁定横屏，竖屏提示
+				open: -1,
+				//竖屏提示文案
+				tipsP: "为了更好的体验，请将屏幕旋转为竖屏",
+				//横屏提示文案
+				tipsL: "为了更好的体验，请将屏幕旋转为横屏",
+				//
+				src: `${resJsThirdPath}OrientationTips.js`,
+			},
+			//到loading正式开始前的进度条模型
+			beforeLoadingModel: {
+				//是否开启
+				open: true,
+				//粗细
+				thickness: "0.25%",
+				//颜色
+				color: "ff0000",
+				//隐藏事件名
+				hideEventName: "hideBeforeLoading",
+			},
+			//白鹭debug面板模型
+			egretDebugModel: {
+				//是否显示面板背景
+				showRect: "false",
+				//是否打印日志
+				showLog: "false",
+				//是否显示fps
+				showFPS: "false",
+				//面板样式
+				showFPSStyle: "x:0,y:0,size:12,textColor:0xffffff,bgAlpha:0.9",
+			},
+			//需要加载的json文件列表
+			jsons: {
+				//默认素材
+				dft: `${resAssetsImgPath}default/dft.json`,
+				//“加载中”素材
+				dft_ico_load: `${resAssetsImgPath}default/dft_ico_load.json`,
+				//白鹭资源配置表
+				dft_res: `${resPath}default.res.json`,
+				//白鹭皮肤配置表
+				dft_thm: `${resPath}default.thm.json`,
+			}
+		},
+		//平台配置模型
+		platformConfigModel: {
+			weChatConfigModel: {
+				$: "微信jssdk",
+				//是否需要配置，默认自动配置
+				needToConfig: true,
+				//是否需要编辑分享
+				needToEditShare: true,
+				//是否打开debug
+				debug: false,
+				//是否隐藏复制链接按钮
+				hideCopyUrl: true,
+				//是否隐藏收藏按钮
+				hideFavorite: false,
+				//是否隐藏所有非基础按钮
+				hideAllNonBase: false,
+				configuration: {
+					//文件地址
+					src: `${resJsThirdPlatformPath}jweixin-1.6.0.min.js`,
+					bridgeEvtName: "wxReceived",
+					successEvtName: "wxConfigSuccessed",
+					readyEvtName: "wxReady",
+				},
+				//加载四参回调
+				getConfigData: function (onGet, onError) {
+					var host = (w && w.location.host) || "";
+					var protocol = (w && w.location.protocol) || "";
+					switch (true) {
+						//如果是域名含有vrupup.com的服务器
+						case host.indexOf("vrupup.com") > -1:
+							var APPID = "wxdda73d79aefd0cba";
+							var url = `${protocol}//auth.vrupup.com/sanguo/auth/share.php`;
+							var param = `?url=${encodeURIComponent(window.location.href.split("#")[0])}&appid=${APPID}`;
+							nnJssdk.request("GET", url, true, param, responseStr => {
+								try {
+									onGet(JSON.parse(responseStr.split("wx_config=")[1]));
+								} catch (e) {
+									onError(responseStr);
+								}
+							});
+							break;
+						//如果是域名含有flyh5的服务器
+						case host.indexOf("flyh5") > -1:
+							var APPID = "wx7c3ed56f7f792d84";
+							var url = `${protocol}//game.flyh5.cn/game/twolevel_autho/share.php`;
+							var param = `?auth_appid=${APPID}&type=js&isonlyopenid=true`;
+							nnJssdk.request("GET", url, true, param, responseStr => {
+								try {
+									onGet(JSON.parse(responseStr.split("wx_config=")[1]));
+								} catch (e) {
+									onError(responseStr);
+								}
+							});
+							break;
+						//如果是域名含有*的服务器
+						default:
+						var APPID = "wxdda73d79aefd0cba";
+							var url = `${protocol}//auth.vrupup.com/sanguo/auth/share.php`;
+							var param = `?url=${encodeURIComponent(window.location.href.split("#")[0])}&appid=${APPID}`;
+							nnJssdk.request("GET", url, true, param, responseStr => {
+								try {
+									onGet(JSON.parse(responseStr.split("wx_config=")[1]));
+								} catch (e) {
+									onError(responseStr);
+								}
+							});
+							/**
+							 * 1.发起获取wx.config所需四参（配置jssdk的公众号appId，时间戳，随机字符串，签名）的请求
+							 * 2.在请求返回的时候检查四参
+							 * 3.如果四参有缺失或不正确，调用onError方法，不然loadingUI会卡在%2
+							 * 4.将四参组成json对象，注意key值正确（字符对应，大小写对应！）
+									   var json = {
+														appId:配置jssdk的公众号appId,
+														timestamp:时间戳,
+														nonceStr:随机字符串,
+														signature:签名
+													}
+							 * 5.将四参组成的json对象传进onGet方法（onGet(json)）
+
+							 示例：
+							 var APPID = "wx7c3ed56f7f792d84";
+							 var url = `${protocol}//game.flyh5.cn/game/twolevel_autho/share_url.php?auth_appid=${APPID}&type=js&isonlyopenid=true`;
+							 var param = `&url=${encodeURIComponent(window.location.href.split("#")[0])}`;
+							 nnJssdk.request("GET", url, true, param, responseStr => {
+								  try {
+										onGet(JSON.parse(responseStr.split("wx_config=")[1]));
+								  } catch (e) {
+										onError(responseStr);
+								  }
+							 });
+
+							 */
+							break;
+					}
+				},
+			},
+			weChatWorkConfigModel: {
+				$: "企业微信jssdk",
+				//是否需要配置，默认自动配置
+				needToConfig: false,
+				//是否需要注入应用的身份与权限，暂未实现
+				needToAgentConfig: false,
+				//是否需要编辑分享
+				needToEditShare: true,
+				//是否打开debug
+				debug: false,
+				//是否隐藏复制链接按钮
+				hideCopyUrl: true,
+				//是否隐藏收藏按钮
+				hideFavorite: false,
+				//是否隐藏所有非基础按钮
+				hideAllNonBase: false,
+				configuration: {
+					//文件地址
+					src: `${resJsThirdPlatformPath}jweixin-1.2.0.min.js`,
+					bridgeEvtName: "wxWorkReceived",
+					successEvtName: "wxWorkConfigSuccessed",
+					readyEvtName: "wxWorkReady",
+				},
+				//加载四参回调
+				getConfigData: function (onGet, onError) {
+					var host = (w && w.location.host) || "";
+					var protocol = (w && w.location.protocol) || "";
+					switch (true) {
+						//如果是域名含有vrupup.com的服务器
+						case host.indexOf("vrupup.com") > -1:
+
+							break;
+						//如果是域名含有flyh5的服务器
+						case host.indexOf("flyh5") > -1:
+
+							break;
+						//如果是域名含有*的服务器
+						default:
+
+							/**
+							 * 1.发起获取wx.config所需四参（配置jssdk的公众号appId，时间戳，随机字符串，签名）的请求
+							 * 2.在请求返回的时候检查四参
+							 * 3.如果四参有缺失或不正确，调用onError方法，不然loadingUI会卡在%2
+							 * 4.将四参组成json对象，注意key值正确（字符对应，大小写对应！）
+									   var json = {
+														appId:配置jssdk的公众号appId,
+														timestamp:时间戳,
+														nonceStr:随机字符串,
+														signature:签名
+													}
+							 * 5.将四参组成的json对象传进onGet方法（onGet(json)）
+							 */
+							break;
+					}
+				},
+			},
+			qqConfigModel: {
+				$: "移动端QQ的api",
+				configuration: {
+					//文件地址
+					src: `${resJsThirdPlatformPath}mobileqq-api-1.0.0.min.js`,
+					bridgeEvtName: "qqReceived",
+					successEvtName: "qqConfigSuccessed",
+					readyEvtName: "qqReady",
+				}
+			},
+			//需要域名是**.qq或者**.weishi才行，不然报错
+			wsConfigModel: {
+				$: "微视api",
+				configuration: {
+					//文件地址
+					src: `${resJsThirdPlatformPath}wsapi-1.0.0.min.js`,
+					bridgeEvtName: "wsReceived",
+					successEvtName: "wsConfigSuccessed",
+					readyEvtName: "wsReady",
+				}
+			},
+			//该api因APP本身对于这块有缺陷，所以慎用
+			msdkConfigModel: {
+				$: "和平精英api",
+				configuration: {
+					//文件地址
+					src: `${resJsThirdPlatformPath}MSDK-1.0.0.js`,
+					bridgeEvtName: "msdkReceived",
+					successEvtName: "msdkConfigSuccessed",
+					readyEvtName: "msdkReady",
+				}
+			},
+		},
+		//需要加载的三方库模型
+		thirdLibConfigModel: {
+			//外部字体库
+			Font: {
+				$: "外部字体",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resAssetsPath}`,
+				//文件名————同一种字体的.ttf格式和.woff格式的文件名需要一致，每多一种字体，下列数组中就多一个文件名
+				val: [],
+			},
+			Neoges: {
+				$: "手势库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}neoges_lib.min.js`,
+				//无
+				val: ""
+			},
+			Particle: {
+				$: "白鹭粒子库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}particle.min.js`,
+				//无
+				val: ""
+			},
+			Lrz: {
+				$: "图片拉取库",
+				//是否加载
+				load: true,
+				//文件地址
+				src: `${resJsThirdOtherPath}Lrz.all.min.js`,
+				//无
+				val: ""
+			},
+			//图片读取库
+			Exif: {
+				$: "图片读取库",
+				//是否加载
+				load: true,
+				//文件地址
+				src: `${resJsThirdOtherPath}Exif-1.0.0.min.js`,
+				//无
+				val: ""
+			},
+			Crypto: {
+				$: "加密库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}Crypto-3.2.0.min.js`,
+				//无
+				val: ""
+			},
+			JQuery: {
+				$: "JQuery库",
+				//是否加载
+				load: true,
+				//文件地址
+				src: `${resJsThirdOtherPath}JQuery-3.2.1.min.js`,
+				//无
+				val: ""
+			},
+			wxmoment: {
+				$: "微信UI库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}wxmoment-0.0.6.min.js`,
+				//无
+				val: ""
+			},
+			FileSaver: {
+				$: "存储文档库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}FileSaver-1.3.2.js`,
+				//无
+				val: ""
+			},
+			BaiduMap: {
+				$: "百度地图库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}BaiduMap-2.0.0.min.js`,
+				//无
+				val: ""
+			},
+			BaiduMini: {
+				$: "百度小程序库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}BaiduMini-1.3.3.min.js`,
+				//无
+				val: ""
+			},
+			TaobaoTida: {
+				$: "淘宝Tida库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}TaobaoTida-3.3.26.min.js`,
+				//请自行设置淘宝API的appkey
+				val: ""
+			},
+			Calendar: {
+				$: "阴历阳历转换库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}Calendar-1.0.0.js`,
+				//无
+				val: ""
+			},
+			QiNiu: {
+				$: "七牛上传视频代码库",
+				//是否加载
+				load: false,
+				//文件地址
+				src: `${resJsThirdOtherPath}QiNiu-1.0.0.min.js`,
+				//无
+				val: ""
+			},
+		}
+	}
+	/** 项目配置模型结束 */
+
+	var href = w.location.href;
+	w.isOnlineHost = w.location.port.length <= 0 && !(href.indexOf("//localhost") > -1 || href.indexOf("//127.0.0.1") > -1);
+	w.nnVer = `?v=${v}`;
+	//项目.js根目录加载地址（强制https，防拦截）
+	w.nnCodePath = w.isOnlineHost ? `https://${w.location.hostname + w.location.pathname.split(/(\w+)\.html/)[0]}` : "";
+	//项目.json、.mp3、.mp4、.ttf、.woff、.png、.jpg根目录加载地址
+	w.nnCDNPath = replaceToNNCDNPath(href).split(/(\w+)\.html/)[0];
+
+	init();
+
+	function init() {
+		var pm = w.projectConfigModel;
+		var vcm = pm.vConsoleConfigModel;
+		if (vcm.coerceOpen) {
+			w.vConsoleText = vcm.textModel.default;
+			loadScript(vcm.src, true, e => { new VConsole() });
+		}
+
+		var ecm = pm.egretConfigModel;
+		var request = new XMLHttpRequest();
+		request.open("GET", w.nnCodePath + ecm.manifestSrc + w.nnVer, false);
+		request.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		request.addEventListener("load", e => {
+			var status = request.status;
+			if (status < 200 || status > 304) console.warn(`url: ${url}\n请求错误！请检查您的请求是否有误！`);
+
+			var json = JSON.parse(request.response.trim());
+			var list = json.initial.concat(json.game);
+			var index = 0;
+			function loadNext() {
+				if (list[index].indexOf(ecm.mainMinJsName) > -1) {
+					ecm.mainMinJsPath = w.nnCodePath + list[index].split(ecm.mainMinJsName)[0];
+					oneLoaded();
+					return;
+				}
+
+				loadScript(list[index], false, oneLoaded);
+			}
+			function oneLoaded() {
+				index++;
+				if (index < list.length) { loadNext(); return; }
+
+				w.egretReady = true;
+				if (w.egretBoot) w.egretBoot();
+			}
+			loadNext();
+		});
+		request.send();
+
+		loadScript(pm.initSrc, true);
+	}
+
+	function loadScript(src, async, callback) {
+		var s = document.createElement("script");
+		s.type = "text/javascript";
+		s.async = async;
+		s.src = w.nnCodePath + src + w.nnVer;
+		var funcName = document.all ? "onreadystatechange" : "onload";
+		s[funcName] = function () {
+			if (document.all && this.readyState != "loaded" && this.readyState != "complete") {
+				return;
+			}
+			s[funcName] = null;
+			s.parentNode && s.parentNode.removeChild(s);
+			callback && callback(s);
+		};
+		document.head.appendChild(s);
+	}
+
+	function isFromNNServers(url) {
+		if (!url || url.indexOf("//localhost") > -1 || url.indexOf("//127.0.0.1") > -1) return false;
+
+		try {
+			var host = url.split("://")[1].split("/")[0];
+
+			var nnHosts = [
+				//云聚客
+				"www.flyh5.cn",
+				//有样
+				"game.flyh6.cn",
+
+				//game的H5域名
+				"game.flyh5.cn",
+
+				//水浒的H5基础域名
+				"vrupup.com",
+				//水浒的H5子域名
+				"xingzhe.vrupup.com",
+				//水浒的H5子域名
+				"langzi.vrupup.com",
+				//水浒的H5子域名
+				"shenyi.vrupup.com",
+
+				//三国的H5子域名
+				"game.vrupup.com",
+				//三国的H5子域名
+				"hpjy.vrupup.com",
+			];
+
+			return nnHosts.indexOf(host) > -1;
+		} catch (e) {
+			return false;
+		}
+	}
+
+	function replaceToNNCDNPath(url) {
+		if (!window.nnJssdk ? !isFromNNServers(url) : !nnJssdk.isFromNNServers(url)) return url;
+
+		try {
+			var temp = url.split("://")[1].split("/");
+			var root = url.indexOf("resources") > -1 ? url.split("resources")[1] : temp[1];
+			var host = temp[0].split(".").length > 2 ? temp[0].split(temp[0].split(".")[0])[1] : `.${temp[0]}`;
+
+			return `${window.location.protocol}//img${host}${root}`;
+		} catch (e) {
+			return url;
+		}
+	}
+
+	</script>
+	<script type="text/javascript">
+		//调用方法
+		// getUserLocation("JETBZ-2GE33-S6D3F-3NRJQ-3VXKJ-AQFTP", function(res){
+		//   console.log("【定位返回数据】", res)
+		//   console.log("【定位返回数据--经纬度】", res.data.result.location)
+		//   console.log("【定位返回数据--省市区】", res.data.result.ad_info)
+		// })
+		//定位方法
+		function getUserLocation(key, callback) {
+			$.ajax({
+				url: "https://apis.map.qq.com/ws/location/v1/ip?",
+				data: {
+					key: key,
+					output: "jsonp"
+				},
+				async: false,
+				dataType: "jsonp",
+				type: 'GET',
+				jsonp: 'callback',
+				jsonpCallback: 'QQmap',
+				success: function (data) {
+					callback({ code: 0, data: data })
+				},
+				error: function (data, xmlHttpRequest, textStatus, errorThrown) {
+					callback({ code: 1, data: data })
+				}
+			})
+		}
+
+
+
+	</script>
+	<!--MtaH5_start-->
+
+	<!--MtaH5_end-->
+
+</body>
+
+</html>
