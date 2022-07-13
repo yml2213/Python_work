@@ -1,6 +1,7 @@
 # !/bin/env python3
 # -*- coding: utf-8 -*
 """
+    link: https://raw.githubusercontent.com/yml2213/Python/master/sbr/sbr.py
     new Env("苏泊尔")
     Name: 苏泊尔  小程序    种大米,换实物
     Author: yml
