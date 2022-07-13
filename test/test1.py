@@ -1,33 +1,45 @@
-list = {'id': 1, 'name': '浏览好物', 'limit': 1, 'num1': 10, 'num2': 0, 'is_finish': False, 'finish_num': 0}, \
-       {'id': 2,
-        'name': '绑定产品送抽奖机会',
-        'limit': 3,
-        'num1': 1,
-        'num2': 1,
-        'is_finish': False,
-        'finish_num': 0}, \
-       {'id': 3, 'name': '邀请好友种大米', 'limit': 5, 'num1': 30, 'num2': 20, 'is_finish': False, 'finish_num': 0}, \
-       {'id': 4, 'name': '上传菜谱', 'limit': 1, 'num1': 60, 'num2': 50, 'is_finish': False, 'finish_num': 0}, \
-       {'id': 5,
-        'name': '分享菜谱',
-        'limit': 5,
-        'num1': 20,
-        'num2': 0,
-        'is_finish': False,
-        'finish_num': 0}, \
-       {'id': 6, 'name': '收取他人大米', 'limit': 3, 'num1': 5, 'num2': 0, 'is_finish': True, 'finish_num': 3}, \
-       {'id': 7,
-        'name': '每日问答',
-        'limit': 2,
-        'num1': 5,
-        'num2': 0,
-        'is_finish': False,
-        'finish_num': 0}, \
-       {'id': 8, 'name': '其他任务', 'limit': 0, 'num1': 0, 'num2': 0,
-        'list': [{'id': 3, 'name': '精选菜谱', 'desc': '测试*', 'rice_num': 5,
-                  'url': '/pages/menuIndex/index?cl_sr=%E5%B0%8F%E7%94%B5&amp;amp;amp;amp;amp;cl_ctnm=rice',
-                  'is_link': False,
-                  'is_finish': False}]}, \
-       {'id': 9, 'name': '活动开始、进度提醒', 'limit': 1, 'num1': 10, 'num2': 0,
-        'is_finish': True,
-        'finish_num': 0}
+import binascii
+from urllib import parse
+
+from pyDes import des, CBC, PAD_PKCS5
+
+# 秘钥
+KEY = 'ZG#)@F01'
+
+
+def md5_encrypt(_data):
+    import hashlib
+    md5 = hashlib.md5()
+    md5.update(_data.encode(encoding='utf-8'))
+    return md5.hexdigest()
+
+
+def des_encrypt(s):
+    """
+    DES 加密
+    :param s: 原始字符串
+    :return: 加密后字符串，16进制
+    """
+    secret_key = KEY
+    iv = secret_key
+    k = des(secret_key, CBC, iv, pad=None, padmode=PAD_PKCS5)
+    en = k.encrypt(s, padmode=PAD_PKCS5)
+    return binascii.b2a_hex(en).decode()
+
+
+a = {"area": "市中区", "city": "济南市", "mobid": "e998cb31be347dc0", "opentype": 0, "password": "zgxw123456",
+     "province": "山东省", "sex": 0, "source": "12-XiaomiM2102J2SC-2.5.0", "userid": "0", "username": "15339956683"}
+
+newdict2 = str(a)
+strdict3 = newdict2.replace("\'", "\"")
+strdict4 = strdict3.replace(" ", "")
+a = parse.quote_plus(strdict4)
+# print(a)
+Params_data = des_encrypt(a)
+Params_data = str.upper(Params_data)
+print(Params_data)
+
+sign_data = f'ZG#)@F01Methoduservip.member.loginParams{Params_data}ZG#)@F01'
+sign = md5_encrypt(sign_data)
+print("==========================")
+print(sign)
