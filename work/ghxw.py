@@ -323,7 +323,6 @@ class Msg(object):
         else:
             print("文件已存在,跳过")
             pass
-        pass
 
     def message(self):
         global msg_info
