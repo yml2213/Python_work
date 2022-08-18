@@ -7,6 +7,10 @@
     Date: 2022.8.17
     cron: 19 7,12 * * *    prophecy.py
 
+    邀请链接: https://wprophecy.com/#/register?refId=f02c05c4b481c3a1&redirectTo=/app/home&fullscreen=Y
+    邀请码: f02c05c4b481c3a1    感谢支持
+
+
     7.12    增加通知
     ================== 青龙--配置文件 ==================
     变量格式: export prophecy_data=" rem_token @ rem_token "    多账号用 换行 或 @ 分割
@@ -38,54 +42,87 @@ Script_Version = "0.1.1"
 class Script:
     def __init__(self, rem_token):
         self.rem_token = rem_token
-        # self.PHPSESSID = phpsessid
 
     # noinspection PyMethodMayBeStatic
     def url(self, name):  # hostname + xxxx
         url = f"https://wprophecy.com/{name}"
         return url
 
-    def headers(self):
+    def get_cookie(self):
+        global cookie_y, token_y
+        url = 'https://wprophecy.com/getCSRFToken'
+        payload = {}
+        headers = {
+            'cookie': f'REM_TOKEN={self.rem_token}',
+            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36'
+        }
+        try:
+            res = requests.request("GET", url, headers=headers, data=payload)
+            result = res.json()
+            token_y = result['data']['CSRF-TOKEN']
+            cookies = res.cookies
+            cookie = requests.utils.dict_from_cookiejar(cookies)
+            cookie_data = cookie['WAR_PROPHECY']
+            cookie_y = f"WAR_PROPHECY={cookie_data}; REM_TOKEN={self.rem_token}"
+            print(cookie_y)
+            print(token_y)
+        except Exception as err:
+            print('获取cookie失败：\n{0}'.format(err))
+
+    def headers_one(self):
         headers = {
             'accept': 'application/json, text/plain, */*',
-            'cookie': f"REM_TOKEN={self.rem_token}",
-            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36',
+            'cookie': self.get_cookie()
         }
         # print(headers)
         return headers
 
+    def headers(self):
+        global cookie_y, token_y
+        headers = {
+            'accept': 'application/json, text/plain, */*',
+            'cookie': cookie_y,
+            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36',
+            'CSRF-TOKEN': token_y
+        }
+        # print(headers)
+        return headers
+
+    def headers2(self):
+        global cookie_y, token_y
+        headers2 = {
+            'accept': 'application/json, text/plain, */*',
+            'cookie': cookie_y,
+            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36',
+            'CSRF-TOKEN': token_y,
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        # print(headers2)
+        return headers2
+
     def csrf_token(self, name="更新 csrf-token"):  # 获取 csrf-token
         try:
-            response = requests.get(url=self.url("getCSRFToken"), headers=self.headers(), verify=False)
+            response = requests.get(url=self.url("getCSRFToken"), headers=self.headers_one(), verify=False)
             result = response.json()
 
             if result['status'] == 1:
                 msg(f"{name}: 成功!")
-                # print(result['data']['CSRF-TOKEN'])
-                return result['data']['CSRF-TOKEN']
+                token = result['data']['CSRF-TOKEN']
+                # print(token)
+                return token
             else:
                 msg(f"{name}: 失败, 请稍后再试!")
                 print(result)
         except Exception as err:
             print(err)
 
-    def headers2(self):
-        headers2 = {
-            'accept': 'application/json, text/plain, */*',
-            'cookie': self.rem_token,
-            'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36',
-            'csrf-token': self.csrf_token()
-        }
-        # print(headers)
-        return headers2
-
     def do_sign(self, name):  # 执行签到奖励
         try:
             payload = {}
-            response = requests.post(url=self.url("user/login/reward/claim"), headers=self.headers2(), data=payload,
+            response = requests.post(url=self.url("user/login/reward/claim"), headers=self.headers(), data=payload,
                                      verify=False)
             result = response.json()
-
+            # print(result)
             if result['status'] == 1:
                 msg(f"{name}: 成功, 获得100礼金!")
                 time.sleep(3)
@@ -114,27 +151,47 @@ class Script:
         except Exception as err:
             print(err)
 
-    def prophecy_list(self, name="预言列表"):  # 预言列表
+    def prophecy_list(self, name="预言列表获取id"):  # 预言列表-返回id
         try:
-            response = requests.get(url=self.url("betting/hottest/result/zh-hans"), headers=self.headers())
+            response = requests.get(url=self.url(
+                "betting/items?filter=%7B%22language%22%3A%22zh-hans%22%2C%22isActiveRound%22%3A%7B%22in%22%3A%5B%22Y%22%5D%7D%7D"),
+                headers=self.headers())
             result = response.json()
             # print(result)
             if result['status'] == 1:
-                msg(f"共找到{result['data']['itemsCount']}个活动预言, 随机选择一个进行预言")
-
-                print(type(result['data']['itemsCount']))
+                num = result['data']['itemsCount']
+                msg(f"共找到{num}个活动预言, 随机选择一个进行预言")
+                random_num = random.randint(0, num - 1)
                 items = result['data']['items']
-                # num = random(result['data']['items'])
-                print(random.randint(0, result['data']['items']))
-                # print(items)
-                for item in items:
-                    if item['roundTemplateId'] == "29":
-                        print(item['roundId'])
-
-                time.sleep(3)
+                # print(items[random_num]['roundId'])
+                round_id = items[random_num]['roundId']
+                time.sleep(2)
+                print(round_id)
+                return round_id
             elif result['status'] == 0:
                 msg(f"{name}: 失败, 请检查变量&脚本更新到最新再试试")
-                print('美国 vs 中国111')
+            else:
+                msg(f"{name}: 失败, 请稍后再试!")
+                print(result)
+        except Exception as err:
+            print(err)
+
+    def do_prophecy(self, name="执行预言"):  # 执行预言
+        try:
+            round_id = self.prophecy_list()
+            print('============')
+            print(round_id)
+            payload = f'amountNoWar=100&roundId={round_id}'
+            print(payload)
+            response = requests.post(url=self.url("betting/create"), headers=self.headers2(), data=payload,
+                                     verify=False)
+            result = response.json()
+            # print(result)
+
+            if result['status'] == 1:
+                msg(f"预言无战争,成功!")
+            elif result['status'] == 0:
+                msg(f"{name}: 失败, 请检查变量&脚本更新到最新再试试")
             else:
                 msg(f"{name}: 失败, 请稍后再试!")
                 print(result)
@@ -298,18 +355,14 @@ def start():
         # print(ck[0])
         # print(ck[1])
         prophecy = Script(ck[0])
-        # prophecy.do_sign("签到")
-        # prophecy.user_info("用户信息")
-        prophecy.prophecy_list("预言列表")
-
-        # prophecy.sign_info("签到信息")
-        # prophecy.get_rice("偷大米")
-        # prophecy.get_index_info("获取可收取大米信息")
-        # prophecy.cookie()
+        prophecy.csrf_token("获取token")
+        prophecy.user_info("用户信息")
+        prophecy.do_sign("签到")
+        prophecy.do_prophecy("执行预言")
 
 
 if __name__ == "__main__":
-    global ckArr, msg_info, send
+    global ckArr, msg_info, send, cookie_y, token_y
     tip()
     start()
     send(f"{Script_Name}", msg_info)
