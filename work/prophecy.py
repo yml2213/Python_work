@@ -5,17 +5,17 @@
     Name: 预言  网页     虚拟币,自己零撸  被坑了钱别找我
     Author: yml
     Date: 2022.8.17
-    cron: 19 7,12 * * *    prophecy.py
+    cron: 4 7,12 * * *    prophecy.py
 
     邀请链接: https://wprophecy.com/#/register?refId=f02c05c4b481c3a1&redirectTo=/app/home&fullscreen=Y
     邀请码: f02c05c4b481c3a1    感谢支持
 
 
-    7.12    增加通知
+    8.17    每日签到, 每天随机预言无战争   最大礼金投入
     ================== 青龙--配置文件 ==================
     变量格式: export prophecy_data=" rem_token @ rem_token "    多账号用 换行 或 @ 分割
 
-    教程:  需要自行用手机抓取 wprophecy.com  域名的包 , 抓 rem_token
+    教程:  电脑浏览器f12 抓取 wprophecy.com  域名的包, cookie中 rem_token  只要这一个就行
 """
 # ================================= 以下代码不懂不要随便乱动 ====================================
 try:
@@ -32,7 +32,7 @@ requests.packages.urllib3.disable_warnings()
 # --------------------------------------------------------------------------------------------
 Script_Name = "预言"
 Name_Pinyin = "prophecy"
-Script_Change = "每日签到, 每天预言无战争 100投入"
+Script_Change = "每日签到, 每天随机预言无战争   最大礼金投入"
 Script_Version = "0.1.1"
 
 
@@ -380,7 +380,6 @@ def start():
         prophecy.csrf_token("获取token")
         prophecy.user_info("用户信息")
         prophecy.do_sign("签到")
-
 
 
 if __name__ == "__main__":
