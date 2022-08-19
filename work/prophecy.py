@@ -64,8 +64,8 @@ class Script:
             cookie = requests.utils.dict_from_cookiejar(cookies)
             cookie_data = cookie['WAR_PROPHECY']
             cookie_y = f"WAR_PROPHECY={cookie_data}; REM_TOKEN={self.rem_token}"
-            print(cookie_y)
-            print(token_y)
+            # print(cookie_y)
+            # print(token_y)
         except Exception as err:
             print('获取cookie失败：\n{0}'.format(err))
 
@@ -102,7 +102,8 @@ class Script:
 
     def csrf_token(self, name="更新 csrf-token"):  # 获取 csrf-token
         try:
-            response = requests.get(url=self.url("getCSRFToken"), headers=self.headers_one(), verify=False)
+            response = requests.get(url=self.url(
+                "getCSRFToken"), headers=self.headers_one(), verify=False)
             result = response.json()
 
             if result['status'] == 1:
@@ -126,6 +127,7 @@ class Script:
             if result['status'] == 1:
                 msg(f"{name}: 成功, 获得100礼金!")
                 time.sleep(3)
+                self.do_prophecy()
             elif result['status'] == 0:
                 msg(f"{name}: {result['error']}, 已申请过奖励!")
             else:
@@ -136,13 +138,32 @@ class Script:
 
     def user_info(self, name="用户信息"):  # 用户信息
         try:
-            response = requests.get(url=self.url("user/appuser/info"), headers=self.headers())
+            response = requests.get(url=self.url(
+                "user/appuser/info"), headers=self.headers())
             result = response.json()
             # print(result)
             if result['status'] == 1:
                 phone = result['data']['data']['contactNo']
                 msg(f"{name}: 成功!\n欢迎:{phone[:3]}****{phone[-4:]}, 余额: {float(result['data']['data']['wallet']['balance'])} USDT, 邀请码: {result['data']['data']['referralCode']}")
                 time.sleep(3)
+            elif result['status'] == 0:
+                msg(f"{name}: 失败, 请检查变量&脚本更新到最新再试试")
+            else:
+                msg(f"{name}: 失败, 请稍后再试!")
+                print(result)
+        except Exception as err:
+            print(err)
+
+    def max_bet(self, name="最大投入"):  # 最大投入
+        try:
+            response = requests.get(url=self.url(
+                "betting/max/bet/256/N"), headers=self.headers())
+            result = response.json()
+            # print(result)
+            if result['status'] == 1:
+                msg(f"{name}: 成功!")
+                # print(result['data'])
+                return result['data']
             elif result['status'] == 0:
                 msg(f"{name}: 失败, 请检查变量&脚本更新到最新再试试")
             else:
@@ -166,7 +187,7 @@ class Script:
                 # print(items[random_num]['roundId'])
                 round_id = items[random_num]['roundId']
                 time.sleep(2)
-                print(round_id)
+                # print(round_id)
                 return round_id
             elif result['status'] == 0:
                 msg(f"{name}: 失败, 请检查变量&脚本更新到最新再试试")
@@ -178,10 +199,11 @@ class Script:
 
     def do_prophecy(self, name="执行预言"):  # 执行预言
         try:
+            bet_num = self.max_bet()
             round_id = self.prophecy_list()
-            print('============')
-            print(round_id)
-            payload = f'amountNoWar=100&roundId={round_id}'
+            # print(round_id)
+            # print(bet_num)
+            payload = f'amountNoWar={bet_num}&roundId={round_id}'
             print(payload)
             response = requests.post(url=self.url("betting/create"), headers=self.headers2(), data=payload,
                                      verify=False)
@@ -334,7 +356,7 @@ def msg(data):
     Msg(data)
 
 
-mac_env(f"{Name_Pinyin}_data")
+# mac_env(f"{Name_Pinyin}_data")
 ql_env(f"{Name_Pinyin}_data")
 
 
@@ -358,7 +380,7 @@ def start():
         prophecy.csrf_token("获取token")
         prophecy.user_info("用户信息")
         prophecy.do_sign("签到")
-        prophecy.do_prophecy("执行预言")
+
 
 
 if __name__ == "__main__":

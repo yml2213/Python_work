@@ -1,17 +1,19 @@
 # !/bin/env python3
 # -*- coding: utf-8 -*
 """
+    link: https://raw.githubusercontent.com/yml2213/Python/master/sbr/sbr.py
     new Env("苏泊尔")
     Name: 苏泊尔  小程序    种大米,换实物
     Author: yml
     Date: 2022.7.12
     cron: 19 7,12 * * *    sbr.py
 
-    7.12    增加通知
+    7.13    完成 签到, 偷大米, 浏览菜谱 任务
     ================== 青龙--配置文件 ==================
-    变量格式: export sbr_data=" cookie @ cookie "   ,多账号用 换行 或 @ 分割
+    变量格式: export sbr_data=" token & cookie @ token & cookie "   ,多账号用 换行 或 @ 分割
 
-    教程:  需要自行用手机抓取 growrice.supor.com 域名的包 , 抓 cookie
+    token 抓 https://growrice.supor.com/rice/backend/public/index.php/api/login/auto-login  的包 , url 后面就是token
+    cookie 抓 https://growrice.supor.com/rice/backend/public/index.php/api/users/get-user-info  的包 , header 中有cookie
 """
 # ================================= 以下代码不懂不要随便乱动 ====================================
 try:
@@ -28,55 +30,69 @@ requests.packages.urllib3.disable_warnings()
 # --------------------------------------------------------------------------------------------
 Script_Name = "苏泊尔"
 Name_Pinyin = "sbr"
-Script_Change = "增加通知"
-Script_Version = "0.1.2"
+Script_Change = "完成 签到, 偷大米, 浏览菜谱 任务"
+Script_Version = "0.0.2"
 
 
 # --------------------------------------------------------------------------------------------
+def start():
+    global _ck_state
+    _ck_state = 1
+    for inx, data in enumerate(ckArr):
+        msg("=============== 开始第" + str(inx + 1) + "个账号 ===============")
+        ck = data.split("&")
+        sbr = Script(ck[0], ck[1])
+        sbr.login()
+        sbr.user_info("用户信息")
+        if _ck_state:
+            sbr.sign_info("签到信息")
+            sbr.task_list("任务列表")
+            sbr.get_index_info("获取可收取大米信息")
 
 
 class Script:
-    def __init__(self, c_utma, phpsessid):
-        self.c_utma = c_utma
-        self.PHPSESSID = phpsessid
+    def __init__(self, token, cookie):
+        self.token = token
+        self.cookie = cookie
 
     # noinspection PyMethodMayBeStatic
     def url(self, name):
         url = f"https://growrice.supor.com/rice/backend/public/index.php/api/{name}"
         return url
 
-    def cookie(self):
-        print(self.c_utma)
-        ts = int(time.time())
-        print(ts)
-        c_utma = self.c_utma.split(".")
-        c_utma[-2], c_utma[-3] = ts, ts
-        print(c_utma)
-        print(type(c_utma))
-        c_utma = str(c_utma)
-        # c_utma = '.'.join(c_utma)
-        _c_utma = ".".join(c_utma)
-        print(_c_utma)
-
-        cookie = f"{c_utma}; {self.PHPSESSID}"
-        print(cookie)
-        return cookie
-
     def headers(self):
         headers = {
             'Host': 'growrice.supor.com',
-            'Cookie': self.cookie(),
+            'Cookie': self.cookie,
             'content-type': 'application/x-www-form-urlencoded'
         }
-        print(headers)
         return headers
 
-    def user_info(self, name):  # 签到信息查询
+    def login(self):  # 登录刷新
+        url_login = f"https://growrice.supor.com/rice/backend/public/index.php/api/login/auto-login?token={self.token}"
+        try:
+            requests.get(url=url_login, headers=self.headers(), verify=False)
+        except Exception as err:
+            print(err)
+
+    def user_info(self, name):  # 用户信息
+        global _ck_state
         try:
             response = requests.get(url=self.url("users/get-user-info"), headers=self.headers(), verify=False)
             result = response.json()
-            print(result)
-
+            # print(result)
+            if result['code'] == 1:
+                msg(f"{name}: {result['msg']}, 欢迎 {result['data']['nickname']}")
+                time.sleep(2)
+            elif result['code'] == 0:
+                msg(f"{name}: {result['msg']}")
+                _ck_state = 0
+                return _ck_state
+            else:
+                msg(f"{name}: 失败, 请稍后再试!")
+                print(result)
+                _ck_state = 0
+                return _ck_state
         except Exception as err:
             print(err)
 
@@ -85,11 +101,10 @@ class Script:
             response = requests.get(url=self.url("signIn/sign-list"), headers=self.headers(), verify=False)
             result = response.json()
             # print(result)
-            # print(result['data']['is_sign'])
             if not result['data']['is_sign']:
                 msg(f"{name}: 未签到 ,去签到喽!")
                 self.do_sign("签到")
-            elif result['code']['is_sign']:
+            elif result['data']['is_sign']:
                 msg(f"{name}: 已签到, 明天再来吧!")
             else:
                 msg(f"{name}: 失败, 请稍后再试!")
@@ -106,6 +121,31 @@ class Script:
                 msg(f"{name}: {result['msg']}, 获得 {result['data']['get_rice_num']} 大米")
                 time.sleep(3)
                 self.browse_recipes("浏览菜谱")
+            elif result['code'] == 0:
+                msg(f"{name}: {result['msg']}")
+            else:
+                msg(f"{name}: 失败, 请稍后再试!")
+                print(result)
+        except Exception as err:
+            print(err)
+
+    def task_list(self, name):  # 任务列表
+        try:
+            response = requests.get(url=self.url("task/index"), headers=self.headers(), verify=False)
+            result = response.json()
+            # print(result)
+            if result['code'] == 1:
+                print(f"{name}: {result['msg']}")
+                task_list = result['data']
+                for task in task_list:
+                    if task['id'] != 8:
+                        _id, name, is_finish = task['id'], task['name'], task['is_finish']
+                        if _id == 6 and is_finish is False:
+                            self.get_rice("偷大米")
+                        elif _id == 6 and is_finish is True:
+                            msg("今天无法偷大米了, 明天再来吧!")
+                            pass
+
             elif result['code'] == 0:
                 msg(f"{name}: {result['msg']}")
             else:
@@ -175,13 +215,16 @@ class Script:
         try:
             response = requests.get(url=self.url("index/index"), headers=self.headers(), verify=False)
             result = response.json()
-            print(result)
+            # print(result)
             rice_list = result['data']['rice_list']
             if result['code'] == 1 and len(rice_list) > 0:
                 for i in range(len(rice_list)):
                     _id, num, collect_name = rice_list[i]["id"], rice_list[i]["num"], rice_list[i]["name"]
                     # print(_id, num, _name)
                     self.collect_rice("收大米", _id, num, collect_name)
+            elif result['code'] == 1 and len(rice_list) == 0:
+                msg(f"{name}: 没有可以收获的大米")
+
             elif result['code'] == 2:
                 msg(f"{name}: {result['msg']}, 请自己先打开一次小程序,种大米后在执行脚本!")
             else:
@@ -343,7 +386,7 @@ def msg(data):
     Msg(data)
 
 
-mac_env(f"{Name_Pinyin}_data")
+# mac_env(f"{Name_Pinyin}_data")
 ql_env(f"{Name_Pinyin}_data")
 
 
@@ -357,22 +400,8 @@ def tip():
     msg(f"共发现 {str(len(ckArr))} 个账号")
 
 
-def start():
-    for inx, data in enumerate(ckArr):
-        msg("=============== 开始第" + str(inx + 1) + "个账号 ===============")
-        ck = data.split("&")
-        print(ck[0])
-        print(ck[1])
-        sbr = Script(ck[0], ck[1])
-        # sbr.user_info("用户信息")
-        # sbr.sign_info("签到信息")
-        # sbr.get_rice("偷大米")
-        # sbr.get_index_info("获取可收取大米信息")
-        sbr.cookie()
-
-
 if __name__ == "__main__":
-    global ckArr, msg_info, send
+    global ckArr, msg_info, send, _ck_state
     tip()
     start()
     send(f"{Script_Name}", msg_info)

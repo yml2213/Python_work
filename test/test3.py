@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import requests
 
 url = "https://wprophecy.com/betting/create"
@@ -12,3 +13,9 @@ headers = {
 response = requests.request("POST", url, headers=headers, data=payload)
 
 print(response.text)
+=======
+from urllib.parse import quote
+
+s = '例子'
+print(quote(s))
+>>>>>>> 4d38f36f9d954872f09e9ad3a018638c73d5113e
