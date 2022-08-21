@@ -1,165 +1,23 @@
-<<<<<<< HEAD
-=======
-import os
-import sys
-import time
-import urllib.parse
-
->>>>>>> 4d38f36f9d954872f09e9ad3a018638c73d5113e
+import json
 import requests
 
-url = "https://wprophecy.com/getCSRFToken"
+url = "https://huodong.fanli.com/sign82580/ajaxMainInit"
 
-<<<<<<< HEAD
 payload = {}
 headers = {
-    'cookie': 'REM_TOKEN=W0YkTBijxlRyjojNT6QyOWXubaMx0u4nwiX54Bs4t2kU4RLNKigPio9LxG5rr9eH',
-    'user-agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Mobile Safari/537.36'
+    'Host': 'huodong.fanli.com',
+    'Accept': 'application/json, text/javascript, */*; q=0.01',
+    'User-Agent': 'Mozilla/5.0 (Linux; Android 12; M2102J2SC Build/SKQ1.211006.001; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/96.0.4664.104 Mobile Safari/537.36 Fanli/7.19.28.6 (ID:2-560135116-66740356908189-4-0; WVC:WV; SCR:1080*2340-2.75)',
+    'X-Requested-With': 'XMLHttpRequest',
+    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Dest': 'empty',
+    'Referer': 'https://huodong.fanli.com/sign82580?spm=page_name.h5.pty-entrance~module-apphomiconxin~std-82580&devid=66740356908189&c_aver=1.0&c_src=2&c_v=7.19.28.6&abtest=61747_c-26_d-2510_b-316_b-404_b-156_b-294_b-30_d-162_a-824_a-1154_b-586_d-206_b-12_b-6_b-48_b-70_b-12_a-148_b-76_b-166_a-78_a-2_f-14_b-4_b-52_c-36_a-18_b-8_a-26_b-2_b-54_a-2_b-30_b-52_a-12_b-8_a-4_b-22_b-14_a-20_b-18_b-32_b-38_a-2_a-2_c-20_a-16_b-4_b-6_b-2_b-4_b-0d3e&c_nt=wifi&mc=4&ci=%7B%5C%22ud%5C%22%3A%5C%22from%3Ddb%26local%3Dmapp_activity%26id%3D458241%26id_type%3Dactivity%5C%22%7D',
+    'Accept-Language': 'zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Cookie': '__utmo=2349992041.460729466.922585781; __utmp=2349992041.460729466.3609735018; FirstUrl=//m.fanli.com/; LandingUrl=https%3A//m.fanli.com/landingapp/chinamobilev2%3Fdevid%3D66740356908189%26c_aver%3D1.0%26c_src%3D2%26c_v%3D7.19.28.6%26abtest%3D61747_d-26_d-3230_b-480_d-162_a-824_a-1154_b-792_b-12_b-6_b-48_b-70_b-236_b-166_a-78_a-2_f-18_b-52_c-36_a-18_b-2_b-6_a-26_b-2_b-54_a-2_b-30_a-52_a-12_b-12_b-56_b-50_b-40_a-38_b-4_b-8_b-dc05%26c_nt%3Dwifi%26mc%3D4; __utmv=132E95C1-FD89-4367-97A4-752F9F799048; Hm_lvt_545c20cb01a15219bfeb0d1f103f99c1=1660972766; prouserid=560135116; prousername=1533995668320220820995; prousernameutf=1533995668320220820995; loginverify=78926940c74ce180; prolong=1660972778; PHPSESSID=92884d228df07d37d4998d366af923d9; _fl_huodong_89933_libao_status=1; _fl_sign82580_has_calendar=1; __utmt=36128d-37160c-38780b-46553b-48835b-55010b-56834b-57140b-60857a-65881b-72211b-72720b-77468b-77533b-79279b-80688b-81959f-82838a-83304a-83790b-83800b-84569a-84670c-84959a-85122a-85323b-85401b-85503b-85890a-86147b-86276b-86432b-86698b-86853b-87292b-87574a-87852b-88057c-88630a-89119a-89590b-89650a-89722b-89749b-89917b; Hm_lpvt_545c20cb01a15219bfeb0d1f103f99c1=1660985882; __fl_trace_cpc=AC9B4281-C6EA-4690-A40A-18C03555DE60'
 }
 
 response = requests.request("GET", url, headers=headers, data=payload)
 
-print(response.text)
-print(response.cookies)
-=======
-# 通知服务
-class Msg(object):
-    def __init__(self, m=''):
-        self.str_msg = m
-        self.message()
-
-    def get_sendnotify(self):
-        if not os.path.exists("sendNotify.py"):
-            cur_path = os.getcwd()
-            print(f"未找到通知依赖文件,将于脚本执行目录({cur_path})新建:sendNotify.py ")
-            try:
-                url = 'https://raw.gh.fakev.cn/yml2213/Python/master/sendNotify.py'
-                response = requests.get(url)
-                with open('sendNotify.py', "w+", encoding="utf-8") as f:
-                    f.write(response.text)
-            except Exception as err:
-                print(err)
-        else:
-            print("文件已存在,跳过")
-            pass
-
-    def message(self):
-        global msg_info
-        print(self.str_msg)
-        try:
-            # msg_info = ''
-            msg_info = f"{msg_info}\n{self.str_msg}"
-        except Exception as err:
-            print(err)
-            msg_info = "{}".format(self.str_msg)
-        sys.stdout.flush()
-        # 这代码的作用就是刷新缓冲区。
-        # 当我们打印一些字符时 ,并不是调用print函数后就立即打印的。一般会先将字符送到缓冲区 ,然后再打印。
-        # 这就存在一个问题 ,如果你想等时间间隔的打印一些字符 ,但由于缓冲区没满 ,不会打印。就需要采取一些手段。如每次打印后强行刷新缓冲区。
-
-    def main(self):
-        global send
-        cur_path = os.getcwd()
-        # print(cur_path)
-        if os.path.exists(cur_path + "/sendNotify.py"):
-            # noinspection PyBroadException
-            try:
-                from sendNotify import send
-            except Exception as err:
-                self.get_sendnotify()
-                print(err)
-                try:
-                    from sendNotify import send
-                except Exception as err:
-                    print(err)
-                    print("加载通知服务失败~")
-        else:
-            self.get_sendnotify()
-            try:
-                from sendNotify import send
-            except Exception as err:
-                print(err)
-                print("加载通知服务失败~")
-
-
-Msg().main()
-
-
-def ql_env(name):
-    global ckArr
-    if name in os.environ:
-        ckArr = []
-        _data = os.environ[name]
-        if "@" in _data:
-            _ck = _data.split("@")
-            ckArr = _ck
-        elif "\n" in _data:
-            _ck = _data.splitlines()
-            ckArr = _ck
-        else:
-            ckArr = _data.split("@")
-
-
-# 时间戳 转 时间  (2022-07-07 14:51:00)
-def ts2time(time_stamp, format_string="%Y-%m-%d %H:%M:%S"):
-    time_stamp = int(time_stamp * (10 ** (10 - len(str(time_stamp)))))
-    time_array = time.localtime(time_stamp)
-    str_date = time.strftime(format_string, time_array)
-    return str_date
-
-
-def task(name, cookie):
-    # 购物车
-    url = "https://lzkjdz-isv.isvjd.com/wxAssemblePage/queryActInfo"
-    wd = urllib.parse.urlencode(name)
-    payload = f"pageNo=1&pageSize=20&pin=XTYXRGTpqcAKPURPsbAQzE7oeVP9kq2pYSH90mYt4m3fwcJlClpxrfmVYaGKuquQkdK3rLBQpEQH9V4tdrrh0w%3D%3D&name={wd}"
-    headers = {
-        'Accept': 'application/json, text/javascript, */*; q=0.01',
-        'Accept-Language': 'zh-CN,zh;q=0.9,fr;q=0.8,de;q=0.7,en;q=0.6',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'Cookie': cookie,
-        'Origin': 'https://lzkjdz-isv.isvjd.com',
-        'Pragma': 'no-cache',
-        'Referer': 'https://lzkjdz-isv.isvjd.com/wxAssemblePage/activity/67dfd244aacb438893a73a03785a48c7?activityId=67dfd244aacb438893a73a03785a48c7&adsource=tg_qrCode',
-        'Sec-Fetch-Dest': 'empty',
-        'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Site': 'same-origin',
-        'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/103.0.0.0 Mobile Safari/537.36',
-        'X-Requested-With': 'XMLHttpRequest',
-        'sec-ch-ua': '".Not/A)Brand";v="99", "Google Chrome";v="103", "Chromium";v="103"',
-        'sec-ch-ua-mobile': '?1',
-        'sec-ch-ua-platform': '"Android"'
-    }
-
-    try:
-        response = requests.post(url=url, headers=headers, data=payload)
-        result = response.json()
-        lists = result['data']['homeInfoResultVOList']
-        for _list in lists:
-            activityId, activityUrl, updateTime = _list['activityId'], _list['activityUrl'], _list['updateTime'],
-            updateTime = ts2time(updateTime)
-            print(activityId, activityUrl, updateTime)
-            data = f"{activityId}   {updateTime}   {activityUrl}\n"
-            Msg(data)
-            f_name = f"{name}.txt"
-            try:
-                with open(f_name, "a+", encoding="utf-8") as f:
-                    f.write(data)
-            except Exception as err:
-                print(err)
-    except Exception as err:
-        print(err)
-
-
-ql_env("jdwxck")
-
-if __name__ == "__main__":
-    global ckArr, msg_info, send
-    for inx, data in enumerate(ckArr):
-        ck = data.split("&")
-        print(ck[0])
-        task(ck[0], ck[1])
-        send(f"京东无线   {ck[0]}", msg_info)
->>>>>>> 4d38f36f9d954872f09e9ad3a018638c73d5113e
+re = eval("u"+"\'"+response.text+"\'")
+print(re)
